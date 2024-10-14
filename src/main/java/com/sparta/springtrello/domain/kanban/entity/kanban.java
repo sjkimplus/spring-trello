@@ -1,4 +1,4 @@
-package com.sparta.springtrello.domain.list.entity;
+package com.sparta.springtrello.domain.kanban.entity;
 
 import com.sparta.springtrello.common.entity.Timestamped;
 import com.sparta.springtrello.domain.card.entity.Card;
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "Lists")
-public class Lists extends Timestamped {
+@Table(name = "Kanbans")
+public class kanban extends Timestamped {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
