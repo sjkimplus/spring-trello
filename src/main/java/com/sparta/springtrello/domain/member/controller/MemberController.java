@@ -12,7 +12,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    public ResponseEntity<?> saveMembers(){
-
-    }
+//    public ResponseEntity<?> saveMembers(){
+//
+//    }
 }
