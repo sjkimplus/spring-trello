@@ -1,5 +1,6 @@
 package com.sparta.springtrello.config;
 
+import com.sparta.springtrello.domain.user.entity.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signin", "/auth/signup", "/health").permitAll()
-                        .requestMatchers("/admin/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/admin/**").hasAuthority(UserType.ROLE_ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .build();
