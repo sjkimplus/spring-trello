@@ -1,6 +1,6 @@
 package com.sparta.springtrello.domain.member.entity;
 
-public enum MemberStatus {
+public enum MemberRole {
     CREATOR ,
     READER
 }

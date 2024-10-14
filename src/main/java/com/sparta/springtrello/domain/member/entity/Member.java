@@ -18,4 +18,11 @@ public class Member extends Timestamped {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(value = EnumType.STRING)
+    private MemberRole memberRole;
+
+    public Member (User user, MemberRole memberRole){
+        this.user = user;
+        this.memberRole = memberRole;
+    }
 }
