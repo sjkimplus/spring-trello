@@ -1,6 +1,7 @@
 package com.sparta.springtrello.domain.board.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
+import com.sparta.springtrello.common.Status;
+import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class Board extends Timestamped {
 
     //배경이미지
     private String image;
+
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id")

@@ -1,7 +1,7 @@
 package com.sparta.springtrello.domain.list.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
-import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.common.Timestamped;
+import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +20,6 @@ public class Lists extends Timestamped {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "card_id",nullable = true)
-    private Card card;
+    @JoinColumn(name = "ticket_id",nullable = true)
+    private Ticket ticket;
 }
