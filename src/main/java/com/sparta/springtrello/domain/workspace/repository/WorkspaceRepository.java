@@ -1,4 +1,6 @@
 package com.sparta.springtrello.domain.workspace.repository;
 
-public class WorkspaceRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface WorkspaceRepository extends JpaRepository<WorkspaceRepository> {
 }
