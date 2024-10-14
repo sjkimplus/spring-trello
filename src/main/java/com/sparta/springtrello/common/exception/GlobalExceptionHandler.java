@@ -1,37 +1,24 @@
-//package com.sparta.springtrello.common.exception;
-//
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.ExceptionHandler;
-//import org.springframework.web.bind.annotation.RestControllerAdvice;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//@RestControllerAdvice
-//public class GlobalExceptionHandler {
-//    /**
-//     * 비밀번호 오류 Exception
-//     * @param ex 오류 상태, 메시지
-//     * @return 해당 내용이 담긴 에러 객체
-//     */
-//    @ExceptionHandler(HotSixException.class)
-//    public ResponseEntity<Map<String, Object>> handlePasswordMismatchException(HotSixException ex) {
-//        return getErrorResponse(ex.getErrorCode().getHttpStatus(), ex.getMessage());
-//    }
-//
-//    /**
-//     * 에러 객체를 반환하는 메서드
-//     * @param status 오류 상태
-//     * @param message 오류 메시지
-//     * @return 해당 내용이 담긴 에러 객체
-//     */
-//    public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
-//        Map<String, Object> errorResponse = new HashMap<>();
-//        errorResponse.put("status", status.name());
-//        errorResponse.put("code", status.value());
-//        errorResponse.put("message", message);
-//
-//        return new ResponseEntity<>(errorResponse, status);
-//    }
-//}
+package com.sparta.springtrello.common.exception;
+
+import com.sparta.springtrello.common.dto.ApiResponseDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    /**
+     * 1. `GlobalException`을 상속받은 예외 클래스를 정의한다. -> super 생성자로 `GlobalExceptionConst`를 넣어준다.
+     * 2. `GlobalExceptionConst`는 `ENUM`으로 상태코드, 메시지를 필드로 가진다.
+     * 3. 새로 정의한 예외 클래스에 super 생성자로 새로 정의한 `GlobalExceptionConst`를 넣어준다.
+     * 4. `GlobalExceptionHandler`는 `GlobalException`을 받아서 상태코드, 메시지를 `ErrorResult`에 넣어서 반환한다.
+     *
+     * @param e e
+     * @return ResponseEntity<ErrorResult>
+     */
+    @ExceptionHandler(HotSixException.class)
+    public ResponseEntity<ApiResponseDto<?>> handlerGlobalException(HotSixException e) {
+        return new ResponseEntity<>(ApiResponseDto.error(e.getMessage()), e.getStatus());
+    }
+}
