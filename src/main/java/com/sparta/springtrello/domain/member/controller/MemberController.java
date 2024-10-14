@@ -1,13 +1,17 @@
 package com.sparta.springtrello.domain.member.controller;
 
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
+import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.member.service.MemberService;
 import com.sparta.springtrello.domain.user.entity.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,10 +20,25 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/workspaces/{id}/members/{userId}")
-    public ResponseEntity<String> saveMembers(@AuthenticationPrincipal AuthUser authUser,
-                                         @PathVariable long id,
-                                         @PathVariable long userId,
+    public ResponseEntity<String> saveMember(@AuthenticationPrincipal AuthUser authUser,
+                                         @PathVariable Long id,
+                                         @PathVariable Long userId,
                                          @RequestBody MemberSaveRequestDto requestDto){
-        return ResponseEntity.ok(memberService.saveMember(id,userId,requestDto));
+        memberService.saveMember(authUser,id,userId,requestDto);
+        return ResponseEntity.ok().body(HttpStatus.OK + ", member save complete.");
+    }
+
+    @GetMapping("/workspaces/{id}/members")
+    public ResponseEntity<List<MemberResponseDto>> getMembers(@PathVariable long id){
+        return ResponseEntity.ok(memberService.getMembers(id));
+    }
+
+    @DeleteMapping("/workspaces/{id}/members/{memberId}")
+    public ResponseEntity<String> deleteMember(@AuthenticationPrincipal AuthUser authUser,
+                                               @PathVariable Long id,
+                                               @PathVariable Long memberId,
+                                               @RequestBody MemberSaveRequestDto requestDto){
+        memberService.deleteMember(authUser,id,memberId,requestDto);
+        return ResponseEntity.ok().body("member delete success");
     }
 }
