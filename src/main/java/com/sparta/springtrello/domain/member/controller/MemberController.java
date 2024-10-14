@@ -19,6 +19,9 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     멤버 생성
+     */
     @PostMapping("/workspaces/{id}/members/{userId}")
     public ResponseEntity<String> saveMember(@AuthenticationPrincipal AuthUser authUser,
                                          @PathVariable Long id,
@@ -28,11 +31,17 @@ public class MemberController {
         return ResponseEntity.ok().body(HttpStatus.OK + ", member save complete.");
     }
 
+    /**
+     멤버 리스트 조회
+     */
     @GetMapping("/workspaces/{id}/members")
     public ResponseEntity<List<MemberResponseDto>> getMembers(@PathVariable long id){
         return ResponseEntity.ok(memberService.getMembers(id));
     }
 
+    /**
+     멤버 상태 삭제로 변경
+     */
     @DeleteMapping("/workspaces/{id}/members/{memberId}")
     public ResponseEntity<String> deleteMember(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,

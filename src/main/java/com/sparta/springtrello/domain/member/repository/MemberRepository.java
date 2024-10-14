@@ -8,15 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByWorkspaceAndUser(Workspace workspace, User user);
 
-    boolean existsByWorkspaceAndMember(Workspace workspace, Long memberId);
-
     @Query("SELECT m from Member m join fetch m.workspace where m.workspace.id = :workspaceId")
     List<Member> findByWorkspaceId(@Param("workspaceId") Long id);
 
-
+    Optional<Member> findByWorkspaceAndId(Workspace workspace, Long memberId);
 }

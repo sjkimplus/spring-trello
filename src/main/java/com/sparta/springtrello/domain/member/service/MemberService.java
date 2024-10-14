@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.member.service;
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
 import com.sparta.springtrello.domain.member.entity.Member;
@@ -13,59 +15,65 @@ import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public void saveMember(AuthUser authUser,long id,
                            long userId,
                            MemberSaveRequestDto requestDto) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new NullPointerException("User not found"));
-        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()-> new NullPointerException("workspace not found"));
-
+        //입력 받은 userid 와 workspaceId 가 유효한 값인지 확인 및 생성
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Workspace workspace = workspaceRepository
+                .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
+        //이미 매니저 등록되어있는지 확인 후 에러 발생
         if(memberRepository.existsByWorkspaceAndUser(workspace,user)){
-            throw new RuntimeException("이미 매니저로 등록되어있습니다.");
+            throw new HotSixException(ErrorCode.MEMBER_RESIST_DUPLICATION);
         }
-
+        //멤버로 등록
         Member member = new Member(user,workspace,requestDto.getMemberRole());
         memberRepository.save(member);
     }
 
+
     public List<MemberResponseDto> getMembers(long id) {
+        //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
-                .orElseThrow(() -> new NullPointerException("WorkSpace not found"));
+                .orElseThrow(() -> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
-        List<Member> memberList = memberRepository.findByWorkspaceId(id);
-
-        List<MemberResponseDto> dtoList = new ArrayList<>();
-        for(Member member : memberList){
-            User user = member.getUser();
-            dtoList.add(new MemberResponseDto(member.getId(),
-                    new UserResponse(user.getId(), user.getUsername())));
-
-        }
-        return dtoList;
+        //멤버 리스트 만들기
+        return memberRepository.findByWorkspaceId(id).stream()
+                .map(member -> new MemberResponseDto(
+                        member.getId(),
+                        new UserResponse(member.getUser().getId(), member.getUser().getUsername())
+                ))
+                .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
 //        User user = userRepository.findById(authUser.getUserId).orElseThrow(()-> new NullPointerException("admin이 아닙니다."));
+        //불러올 워크페이스 존재 여부 확인
+        Workspace workspace = workspaceRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
-        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()-> new NullPointerException("workspace not found"));
-
-        if(memberRepository.existsByWorkspaceAndMember(workspace,memberId)){
-            throw new RuntimeException("해당 매니저가 존재하지 않습니다.");
-        }
-
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new NullPointerException("member not found"));
+        //해당 워크스페이스에 해당 멤버가 있는지 확인
+        Member member = memberRepository.findByWorkspaceAndId(workspace, memberId)
+                .orElseThrow(() -> new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
         member.deleteMember(requestDto.getMemberRole());
    }

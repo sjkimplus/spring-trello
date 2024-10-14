@@ -1,5 +1,6 @@
 package com.sparta.springtrello.domain.kanban.controller;
 
+import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.kanban.dto.request.KanbanSaveRequestDto;
 import com.sparta.springtrello.domain.kanban.service.KanbanService;
 import com.sparta.springtrello.domain.user.entity.AuthUser;
@@ -15,14 +16,20 @@ public class kanbanController {
 
     private final KanbanService kanbanService;
 
+    /**
+     칸반 생성
+     */
     @PostMapping
     public ResponseEntity<String> createKanban(@AuthenticationPrincipal AuthUser authUser,
-                                               @PathVariable Long id,
-                                               @RequestBody KanbanSaveRequestDto requestDto){
+                                                       @PathVariable Long id,
+                                                       @RequestBody KanbanSaveRequestDto requestDto){
         kanbanService.createKanban(authUser,id,requestDto);
-        return ResponseEntity.ok().body("kanban create complete");
+        return ResponseEntity.ok().body("kanban update complete");
     }
 
+    /**
+     칸반 수정
+     */
     @PutMapping("/{kanbansId}")
     public ResponseEntity<String> updateKanban(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,
@@ -32,6 +39,9 @@ public class kanbanController {
         return ResponseEntity.ok().body("kanban update complete");
     }
 
+    /**
+     칸반 삭제 상태변경
+     */
     @DeleteMapping("{kanbansId}")
     public ResponseEntity<String> deleteKanban(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,
