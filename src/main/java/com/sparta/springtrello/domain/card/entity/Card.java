@@ -1,7 +1,7 @@
 package com.sparta.springtrello.domain.card.entity;
 
 import com.sparta.springtrello.common.entity.Timestamped;
-import com.sparta.springtrello.domain.list.entity.Lists;
+import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +23,5 @@ public class Card extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lists_id")
-    private Lists lists;
+    private Kanban kanban;
 }
