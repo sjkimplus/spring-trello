@@ -27,7 +27,7 @@ public class KanbanService {
     @Transactional
     public void createKanban(AuthUser authUser, Long id, KanbanSaveRequestDto requestDto) {
         //유저 확인
-//        userService.find(authUser.getId());
+        userService.checkUser(authUser.getId());
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
@@ -41,7 +41,7 @@ public class KanbanService {
 
     @Transactional
     public void updateKanban(AuthUser authUser, Long id,Long kanbansId, KanbanSaveRequestDto requestDto) {
-//        userService.find(authUser.getId());
+        userService.checkUser(authUser.getId());
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
@@ -54,7 +54,7 @@ public class KanbanService {
 
     @Transactional
     public void updateOrder(AuthUser authUser, Long id, Long kanbansId, Integer newOrder) {
-//        userService.find(authUser.getId());
+        userService.checkUser(authUser.getId());
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
@@ -76,11 +76,13 @@ public class KanbanService {
 
     @Transactional
     public void deleteKanban(AuthUser authUser, Long id, Long kanbansId, KanbanSaveRequestDto requestDto) {
-//        userService.find(authUser.getId());
+        userService.checkUser(authUser.getId());
         //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //해당 칸반 있는지 확인
-        Kanban kanban = kanbanRepository.findById(kanbansId).orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
+        Kanban kanban = kanbanRepository.findById(kanbansId)
+                .orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
         //칸반 변경된 상태 업데이트
         kanban.deleteKanban(requestDto.getKanbanStatus());
     }

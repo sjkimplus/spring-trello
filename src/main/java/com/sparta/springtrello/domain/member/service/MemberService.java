@@ -35,8 +35,7 @@ public class MemberService {
                            long userId,
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
-//        userService.find(authUser.getId());
-        //입력 받은 userid 와 workspaceId 가 유효한 값인지 확인 및 생성
+        userService.checkUser(authUser.getId());
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
@@ -66,7 +65,7 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
-//        userService.find(authUser.getId());
+        userService.checkUser(authUser.getId());
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
@@ -78,5 +77,16 @@ public class MemberService {
         member.deleteMember(requestDto.getMemberRole());
    }
 
+   public void existMember(Long userId,Long id) {
+        //입력받은 userid 와 workspaceid로 생성
+       User user = userRepository.findById(userId)
+               .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
+       Workspace workspace = workspaceRepository
+               .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
+       //이미 매니저 등록되어있는지 확인 후 에러 발생
+       if(!memberRepository.existsByWorkspaceAndUser(workspace,user)){
+           throw new HotSixException(ErrorCode.MEMBER_RESIST_DUPLICATION);
+       }
+   }
 
 }
