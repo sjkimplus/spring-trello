@@ -1,6 +1,6 @@
 package com.sparta.springtrello.domain.user.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
+import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.dto.request.SignUpRequestDto;

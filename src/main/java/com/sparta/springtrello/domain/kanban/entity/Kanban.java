@@ -1,6 +1,6 @@
 package com.sparta.springtrello.domain.kanban.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
+import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.board.entity.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
