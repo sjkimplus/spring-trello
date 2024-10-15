@@ -17,10 +17,13 @@ public class Ticket extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String contents;
 
+    @Column(nullable = false)
     private String deadline;
 
     private Status status;
@@ -30,6 +33,15 @@ public class Ticket extends Timestamped {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lists_id")
-    private Lists lists;
+    @JoinColumn(name = "kanban_id")
+    private Kanban kanban;
+
+    public Ticket(String title, String contents, String deadline, User user, Kanban kanban) {
+        this.title = title;
+        this.contents = contents;
+        this.deadline = deadline;
+        this.user = user;
+        this.kanban = kanban;
+        this.status = Status.ACTIVATED;
+    }
 }
