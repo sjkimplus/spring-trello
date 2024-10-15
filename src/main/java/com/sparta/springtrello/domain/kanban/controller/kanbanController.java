@@ -40,6 +40,18 @@ public class kanbanController {
     }
 
     /**
+     칸반 순서 변경
+     */
+    @PutMapping("/{kanbansId}")
+    public ResponseEntity<String> updateOrder(@AuthenticationPrincipal AuthUser authUser,
+                                              @PathVariable Long id,
+                                              @PathVariable Long kanbansId,
+                                              @RequestParam Integer newOrder){
+        kanbanService.updateOrder(authUser,id,kanbansId,newOrder);
+        return ResponseEntity.ok().body("kanban update complete");
+    }
+
+    /**
      칸반 삭제 상태변경
      */
     @DeleteMapping("{kanbansId}")

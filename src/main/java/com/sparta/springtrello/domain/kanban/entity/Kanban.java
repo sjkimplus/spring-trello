@@ -18,6 +18,7 @@ public class Kanban extends Timestamped {
     private Long id;
 
     private String title;
+    private Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id",nullable = true)
@@ -26,7 +27,8 @@ public class Kanban extends Timestamped {
     @Enumerated(EnumType.STRING)
     private KanbanStatus kanbanStatus;
 
-    public Kanban(String title, Board board, KanbanStatus kanbanStatus){
+    public Kanban(Integer order,String title, Board board, KanbanStatus kanbanStatus){
+        this.order = order;
         this.title = title;
         this.board = board;
         this.kanbanStatus = kanbanStatus;
@@ -36,6 +38,10 @@ public class Kanban extends Timestamped {
         this.title = title;
         this.board = board;
         this.kanbanStatus = kanbanStatus;
+    }
+
+    public void updateOrder(Integer order){
+        this.order = order;
     }
 
     public void deleteKanban(KanbanStatus kanbanStatus){

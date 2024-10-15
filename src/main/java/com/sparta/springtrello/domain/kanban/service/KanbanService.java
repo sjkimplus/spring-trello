@@ -27,8 +27,11 @@ public class KanbanService {
 //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+        //칸반 순서를 위한 order 자동 생성
+        Integer maxOrder = kanbanRepository.findMaxOrderByBoard(board);
+        Integer newOrder = maxOrder ==null? 1: maxOrder +1;
         //칸반 생성 후 레파지토리에 저장
-        Kanban kanban = new Kanban(requestDto.getTitle(),board,requestDto.getKanbanStatus());
+        Kanban kanban = new Kanban(newOrder,requestDto.getTitle(),board,requestDto.getKanbanStatus());
         kanbanRepository.save(kanban);
     }
 
@@ -44,6 +47,26 @@ public class KanbanService {
     }
 
     @Transactional
+    public void updateOrder(AuthUser authUser, Long id, Long kanbansId, Integer newOrder) {
+        //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
+        //해당 보드 있는지 확인
+        Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+        //해당 칸반 있는지 확인
+        Kanban kanban = kanbanRepository.findById(kanbansId).orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
+        //기존 순서 가져오기
+        Integer oldOrder = kanban.getOrder();
+        if(newOrder<oldOrder){
+            kanbanRepository.decreaseOrderBetween(board,newOrder,oldOrder-1);
+        }else if(newOrder > oldOrder){
+            kanbanRepository.increaseOrderBetween(board,oldOrder+1,newOrder);
+        }else{
+            throw new RuntimeException("기존의 순서와 같은 순서입니다.");
+        }
+        kanban.updateOrder(newOrder);
+        kanbanRepository.save(kanban);
+    }
+
+    @Transactional
     public void deleteKanban(AuthUser authUser, Long id, Long kanbansId, KanbanSaveRequestDto requestDto) {
         //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
         //해당 보드 있는지 확인
@@ -53,4 +76,7 @@ public class KanbanService {
         //칸반 변경된 상태 업데이트
         kanban.deleteKanban(requestDto.getKanbanStatus());
     }
+
+
+
 }
