@@ -50,25 +50,24 @@ public class WorkspaceService {
         return new WorkspaceSaveResponseDto(workspace);
     }
 
-//    @Transactional(readOnly = true)
-//    public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
-//
-//        // 유저검증
-//        Long userId = authUser.getId();
-//        userService.checkUser(userId);
-//
-//
-//        List<Workspace> workspaces = workspaceRepository.findAllByMemberId();
-//
-//        return workspaces.stream()
-//                .map(workspace -> new WorkspaceReadResponseDto(
-//                        workspace.getId(),
-//                        workspace.getTitle(),
-//                        workspace.getTitle(),
-//                        workspace.getCreatedAt(),
-//                        workspace.getModifiedAt()
-//                )).toList();
-//    }
+    @Transactional(readOnly = true)
+    public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
+
+        // 유저검증
+        Long userId = authUser.getId();
+        userService.checkUser(userId);
+
+        List<Workspace> workspaces = workspaceRepository.findAllByMemberId(userId);
+
+        return workspaces.stream()
+                .map(workspace -> new WorkspaceReadResponseDto(
+                        workspace.getId(),
+                        workspace.getTitle(),
+                        workspace.getContent(),
+                        workspace.getCreatedAt(),
+                        workspace.getModifiedAt()
+                )).toList();
+    }
 
     public WorkspaceEditResponseDto editWorkspace(AuthUser authUser,
                                                   WorkspaceEditRequestDto workspaceEditRequestDto,
@@ -78,16 +77,21 @@ public class WorkspaceService {
         Long userId = authUser.getId();
         userService.checkUser(userId);
 
-//        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-//                new IllegalArgumentException("User not found"));
-//
-//        // 수정, 삭제 불가(읽기 권한일 경우)
-//        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
-//            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
-//        }
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
 
-        Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("워크스페이스 없음"));
+        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("Workspace not found"));
+
+        // Member가 해당 워크스페이스에 속해 있는지 확인
+        if (!workspace.getMembers().contains(member)) {
+            throw new IllegalArgumentException("해당 워크스페이스에 속해 있지 않음.");
+        }
+
+        // 수정, 삭제 불가(읽기 권한일 경우)
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+        }
 
         workspace.update(workspaceEditRequestDto);
         workspaceRepository.save(workspace);
@@ -101,13 +105,13 @@ public class WorkspaceService {
         Long userId = authUser.getId();
         userService.checkUser(userId);
 
-//        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-//                new IllegalArgumentException("User not found"));
-//
-//        // 수정, 삭제 불가(읽기 권한일 경우)
-//        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
-//            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
-//        }
+        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
+        // 수정, 삭제 불가(읽기 권한일 경우)
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+        }
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("워크스페이스 없음"));

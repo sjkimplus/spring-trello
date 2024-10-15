@@ -30,12 +30,12 @@ public class WorkspaceController {
         return ResponseEntity.ok(ApiResponseDto.success(saveResponseDto));
     }
 
-//    // 워크스페이스 조회
-//    @GetMapping()
-//    public ResponseEntity<ApiResponseDto<List<WorkspaceReadResponseDto>>> readWorkspace(@AuthenticationPrincipal AuthUser authUser) {
-//        List<WorkspaceReadResponseDto> readResponseDto = workspaceService.readWorkspace(authUser);
-//        return ResponseEntity.ok(ApiResponseDto.success(readResponseDto));
-//    }
+    // 워크스페이스 조회
+    @GetMapping()
+    public ResponseEntity<ApiResponseDto<List<WorkspaceReadResponseDto>>> readWorkspace(@AuthenticationPrincipal AuthUser authUser) {
+        List<WorkspaceReadResponseDto> readResponseDto = workspaceService.readWorkspace(authUser);
+        return ResponseEntity.ok(ApiResponseDto.success(readResponseDto));
+    }
 
     // 워크스페이스 수정
     @PutMapping("/{id}")

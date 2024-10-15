@@ -27,6 +27,10 @@ public class Workspace extends Timestamped {
     private String title;
     private String content;
 
+    @OneToMany(mappedBy = "workspace", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Member> members = new ArrayList<>();
+
+
     public Workspace(WorkspaceSaveRequestDto workspaceSaveRequestDto) {
         this.title = workspaceSaveRequestDto.getTitle();
         this.content = workspaceSaveRequestDto.getContent();
