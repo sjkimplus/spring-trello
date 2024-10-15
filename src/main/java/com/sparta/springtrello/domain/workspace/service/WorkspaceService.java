@@ -1,6 +1,7 @@
 package com.sparta.springtrello.domain.workspace.service;
 
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
@@ -52,7 +53,6 @@ public class WorkspaceService {
 //    @Transactional(readOnly = true)
 //    public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
 //
-//
 //        // 유저검증
 //        Long userId = authUser.getId();
 //        userService.checkUser(userId);
@@ -82,8 +82,8 @@ public class WorkspaceService {
 //                new IllegalArgumentException("User not found"));
 //
 //        // 수정, 삭제 불가(읽기 권한일 경우)
-//        if (member.getRole().equals(MemberRole.Reader)) {
-//            throw new IllegalArgumentException("You cannot edit a read workspace");
+//        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+//            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
 //        }
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->
@@ -105,8 +105,8 @@ public class WorkspaceService {
 //                new IllegalArgumentException("User not found"));
 //
 //        // 수정, 삭제 불가(읽기 권한일 경우)
-//        if (member.getRole().equals(MemberRole.Reader)) {
-//            throw new IllegalArgumentException("You cannot edit a read workspace");
+//        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+//            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
 //        }
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->

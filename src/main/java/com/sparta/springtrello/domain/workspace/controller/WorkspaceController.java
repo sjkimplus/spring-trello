@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/workspaces")
+@RestController
+@RequestMapping("/workspaces")
 @RequiredArgsConstructor
 public class WorkspaceController {
 

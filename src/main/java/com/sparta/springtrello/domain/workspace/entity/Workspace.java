@@ -1,6 +1,7 @@
 package com.sparta.springtrello.domain.workspace.entity;
 
 import com.sparta.springtrello.common.entity.Timestamped;
+import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
 import jakarta.persistence.*;
@@ -8,6 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
