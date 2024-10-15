@@ -1,13 +1,15 @@
 package com.sparta.springtrello.domain.comment.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
-import com.sparta.springtrello.domain.card.entity.Card;
+import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.comment.dto.request.CommentEditRequestDto;
 import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.smartcardio.Card;
 
 @Entity
 @NoArgsConstructor
@@ -22,16 +24,16 @@ public class Comment extends Timestamped {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "card_id")
-    private Card card;
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Comment(CommentSaveRequestDto commentSaveRequestDto, Card card, Member member) {
+    public Comment(CommentSaveRequestDto commentSaveRequestDto, Ticket ticket, Member member) {
         this.content = commentSaveRequestDto.getContent();
-        this.card = card;
+        this.ticket = ticket;
         this.member = member;
 
     }

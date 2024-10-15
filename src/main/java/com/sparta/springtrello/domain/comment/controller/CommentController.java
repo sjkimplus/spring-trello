@@ -30,15 +30,17 @@ public class CommentController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseDto<CommentEditResponseDto>> editComment(@AuthenticationPrincipal AuthUser authUser,
                                                                               @PathVariable Long id,
+                                                                              @RequestParam Long cardId,
                                                                               @RequestBody CommentEditRequestDto commentEditRequestDto) {
-        CommentEditResponseDto editResponseDto = commentService.editComment(authUser, id, commentEditRequestDto);
+        CommentEditResponseDto editResponseDto = commentService.editComment(authUser, id, cardId, commentEditRequestDto);
         return ResponseEntity.ok(ApiResponseDto.success(editResponseDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponseDto<Void>> deleteComment(@PathVariable Long id,
+                                                              @RequestParam Long cardId,
                                                               @AuthenticationPrincipal AuthUser authUser) {
-        commentService.deleteComment(id, authUser);
+        commentService.deleteComment(id, cardId,authUser);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 }

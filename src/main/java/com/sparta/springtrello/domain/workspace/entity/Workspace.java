@@ -1,6 +1,6 @@
 package com.sparta.springtrello.domain.workspace.entity;
 
-import com.sparta.springtrello.common.entity.Timestamped;
+import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;

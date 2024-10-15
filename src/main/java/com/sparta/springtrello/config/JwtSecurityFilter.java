@@ -27,13 +27,11 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
-
     @Override
     protected void doFilterInternal(
             HttpServletRequest httpRequest,
             @NonNull HttpServletResponse httpResponse,
             @NonNull FilterChain chain
-
     ) throws ServletException, IOException {
         String authorizationHeader = httpRequest.getHeader("Authorization");
         String url = httpRequest.getRequestURI();
@@ -44,6 +42,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtil.extractClaims(jwt);
                 Long userId = Long.parseLong(claims.getSubject());
                 String email = claims.get("email", String.class);
+                String nickname = claims.get("nickname", String.class);
                 UserRole userRole = UserRole.of(claims.get("userRole", String.class));
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
