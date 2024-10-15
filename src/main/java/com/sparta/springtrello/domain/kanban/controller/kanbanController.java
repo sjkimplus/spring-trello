@@ -1,9 +1,8 @@
 package com.sparta.springtrello.domain.kanban.controller;
 
-import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.kanban.dto.request.KanbanSaveRequestDto;
 import com.sparta.springtrello.domain.kanban.service.KanbanService;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,7 +41,7 @@ public class kanbanController {
     /**
      칸반 순서 변경
      */
-    @PutMapping("/{kanbansId}")
+    @PutMapping("/{kanbansId}/orders")
     public ResponseEntity<String> updateOrder(@AuthenticationPrincipal AuthUser authUser,
                                               @PathVariable Long id,
                                               @PathVariable Long kanbansId,

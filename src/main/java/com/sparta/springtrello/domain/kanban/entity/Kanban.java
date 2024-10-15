@@ -21,7 +21,7 @@ public class Kanban extends Timestamped {
     private Integer order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id",nullable = true)
+    @JoinColumn(name = "board_id")
     private Board board;
 
     @Enumerated(EnumType.STRING)

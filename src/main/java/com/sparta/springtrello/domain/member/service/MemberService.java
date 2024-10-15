@@ -6,20 +6,18 @@ import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.dto.response.UserResponse;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
+import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,14 +28,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
-    public void saveMember(AuthUser authUser,long id,
+    public void saveMember(AuthUser authUser, long id,
                            long userId,
                            MemberSaveRequestDto requestDto) {
+        //사용자 인증 확인
+//        userService.find(authUser.getId());
         //입력 받은 userid 와 workspaceId 가 유효한 값인지 확인 및 생성
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
                 .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
         //이미 매니저 등록되어있는지 확인 후 에러 발생
@@ -49,7 +50,6 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-
     public List<MemberResponseDto> getMembers(long id) {
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
@@ -59,14 +59,14 @@ public class MemberService {
         return memberRepository.findByWorkspaceId(id).stream()
                 .map(member -> new MemberResponseDto(
                         member.getId(),
-                        new UserResponse(member.getUser().getId(), member.getUser().getUsername())
+                        new UserResponse(member.getUser().getId(), member.getUser().getName())
                 ))
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
-//        User user = userRepository.findById(authUser.getUserId).orElseThrow(()-> new NullPointerException("admin이 아닙니다."));
+//        userService.find(authUser.getId());
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
@@ -77,4 +77,6 @@ public class MemberService {
 
         member.deleteMember(requestDto.getMemberRole());
    }
+
+
 }
