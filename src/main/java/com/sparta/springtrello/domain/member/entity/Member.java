@@ -32,7 +32,7 @@ public class Member extends Timestamped {
         this.memberRole = memberRole;
     }
 
-    public void deleteMember(MemberRole memberRole) {
-        this.memberRole = memberRole;
+    public void deleteMember() {
+        this.memberRole = MemberRole.ROLE_DELETE;
     }
 }

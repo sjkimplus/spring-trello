@@ -64,7 +64,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
+    public void deleteMember(AuthUser authUser,Long id, Long memberId) {
         userService.checkUser(authUser.getId());
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
@@ -74,7 +74,7 @@ public class MemberService {
         Member member = memberRepository.findByWorkspaceAndId(workspace, memberId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
-        member.deleteMember(requestDto.getMemberRole());
+        member.deleteMember();
    }
 
    public void existMember(Long userId,Long id) {

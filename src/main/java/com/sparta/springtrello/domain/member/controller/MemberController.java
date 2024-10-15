@@ -45,9 +45,8 @@ public class MemberController {
     @DeleteMapping("/workspaces/{id}/members/{memberId}")
     public ResponseEntity<String> deleteMember(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,
-                                               @PathVariable Long memberId,
-                                               @RequestBody MemberSaveRequestDto requestDto){
-        memberService.deleteMember(authUser,id,memberId,requestDto);
+                                               @PathVariable Long memberId){
+        memberService.deleteMember(authUser,id,memberId);
         return ResponseEntity.ok().body("member delete success");
     }
 }
