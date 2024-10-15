@@ -88,5 +88,17 @@ public class UserService {
 
         return new UserSearchResponseDto(user);
     }
+
+    // 유저검증용 메서드
+    public void checkUser (Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new HotSixException(USER_NOT_FOUND)
+        );
+
+        if (user.getStatus()==UserStatus.DELETED)
+            throw new HotSixException(USER_NOT_FOUND);
+
+    }
 }
 
