@@ -9,7 +9,6 @@ import com.sparta.springtrello.domain.user.dto.response.SignInResponseDto;
 import com.sparta.springtrello.domain.user.dto.response.SignUpResponseDto;
 import com.sparta.springtrello.domain.user.dto.response.UserSearchResponseDto;
 import com.sparta.springtrello.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
