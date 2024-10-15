@@ -2,6 +2,7 @@ package com.sparta.springtrello.domain.member.controller;
 
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.member.service.MemberService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
@@ -24,9 +25,9 @@ public class MemberController {
      */
     @PostMapping("/workspaces/{id}/members")
     public ResponseEntity<String> saveMember(@AuthenticationPrincipal AuthUser authUser,
-                                         @PathVariable Long id,
-                                         @RequestParam String email,
-                                         @RequestBody MemberSaveRequestDto requestDto){
+                                             @PathVariable Long id,
+                                             @RequestParam String email,
+                                             @RequestBody MemberSaveRequestDto requestDto){
         memberService.saveMember(authUser,id,email,requestDto);
         return ResponseEntity.ok().body(HttpStatus.OK + ", member save complete.");
     }

@@ -1,5 +1,6 @@
 package com.sparta.springtrello.config;
 
+import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +45,11 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/sign-up", "/users/sign-in").permitAll()
-                        .requestMatchers("/workspaces").hasAuthority(UserRole.Authority.ADMIN)
-                        .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("ROLE_ADMIN","ROLE_CREATOR","ROLE_READER") // GET 요청에 ROLE_READER 권한만 허용
-                        .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority( "ROLE_CREATOR","ROLE_ADMIN") // ROLE_CREATOR와 ROLE_ADMIN만 POST 요청 허용
-                        .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority( "ROLE_CREATOR","ROLE_ADMIN") // ROLE_CREATOR와 ROLE_ADMIN만 PUT 요청 허용
-                        .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority( "ROLE_CREATOR","ROLE_ADMIN") // ROLE_CREATOR와 ROLE_ADMIN만 DELETE 요청 허용
+                        .requestMatchers("/workspaces").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN") // GET 요청에 ROLE_READER 권한만 허용
+                        .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("ROLE_ADMIN")// ROLE_CREATOR와 ROLE_ADMIN만 POST 요청 허용
+                        .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority( "ROLE_ADMIN") // ROLE_CREATOR와 ROLE_ADMIN만 PUT 요청 허용
+                        .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority( "ROLE_ADMIN") // ROLE_CREATOR와 ROLE_ADMIN만 DELETE 요청 허용
                         .anyRequest().authenticated()
                 )
                 .build();
