@@ -44,7 +44,6 @@ public class WorkspaceService {
             throw new IllegalArgumentException("User is not admin");
         }
 
-
         Workspace workspace = workspaceRepository.save(new Workspace(workspaceSaveRequestDto));
 
         return new WorkspaceSaveResponseDto(workspace);

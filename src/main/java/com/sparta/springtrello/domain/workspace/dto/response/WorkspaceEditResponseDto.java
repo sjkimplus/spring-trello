@@ -1,9 +1,11 @@
 package com.sparta.springtrello.domain.workspace.dto.response;
 
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class WorkspaceEditResponseDto {
 
     private Long id;
