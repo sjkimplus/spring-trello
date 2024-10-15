@@ -31,12 +31,13 @@ public class MemberService {
     private final UserService userService;
 
     @Transactional
-    public void saveMember(AuthUser authUser, long id,
-                           long userId,
+    public void saveMember(AuthUser authUser,
+                           long id,
+                           String email,
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
         userService.checkUser(authUser.getId());
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
                 .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));

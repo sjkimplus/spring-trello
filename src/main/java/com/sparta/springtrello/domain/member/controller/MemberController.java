@@ -22,12 +22,12 @@ public class MemberController {
     /**
      멤버 생성
      */
-    @PostMapping("/workspaces/{id}/members/{userId}")
+    @PostMapping("/workspaces/{id}/members")
     public ResponseEntity<String> saveMember(@AuthenticationPrincipal AuthUser authUser,
                                          @PathVariable Long id,
-                                         @PathVariable Long userId,
+                                         @RequestParam String email,
                                          @RequestBody MemberSaveRequestDto requestDto){
-        memberService.saveMember(authUser,id,userId,requestDto);
+        memberService.saveMember(authUser,id,email,requestDto);
         return ResponseEntity.ok().body(HttpStatus.OK + ", member save complete.");
     }
 
