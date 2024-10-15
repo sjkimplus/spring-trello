@@ -5,16 +5,20 @@ import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.board.entity.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.kanban.dto.request.KanbanSaveRequestDto;
+import com.sparta.springtrello.domain.kanban.dto.response.KanbanResponseDto;
 import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.service.UserService;
+import com.sparta.springtrello.domain.workspace.entity.Workspace;
+import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +29,16 @@ public class KanbanService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final WorkspaceRepository workspaceRepository;
 
     @Transactional
-    public void createKanban(AuthUser authUser, Long id, KanbanSaveRequestDto requestDto) {
+    public void createKanban(AuthUser authUser, Long id,Long boardId, KanbanSaveRequestDto requestDto) {
         //유저 확인
         userService.checkUser(authUser.getId());
+        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("Workspace not found"));
         //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id)
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //칸반 순서를 위한 order 자동 생성
         Integer maxOrder = kanbanRepository.findMaxOrderByBoard(board);
@@ -89,9 +96,13 @@ public class KanbanService {
         kanban.deleteKanban(requestDto.getKanbanStatus());
     }
 
-    public List<Kanban> getKanbans(Long id){
-        Board board = boardRepository.findById(id)
+    public List<KanbanResponseDto> getKanbans(Long id,Long boardId){
+        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("Workspace not found"));
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
-        return kanbanRepository.findByBoard(board);
+        return kanbanRepository.findByBoard(board).stream()
+                .map(kanban -> new KanbanResponseDto(kanban.getTitle()))
+                .collect(Collectors.toList());
     }
 }

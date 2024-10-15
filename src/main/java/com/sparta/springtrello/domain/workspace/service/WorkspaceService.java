@@ -88,7 +88,7 @@ public class WorkspaceService {
         }
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
@@ -108,7 +108,7 @@ public class WorkspaceService {
                 new IllegalArgumentException("User not found"));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 

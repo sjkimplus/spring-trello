@@ -40,7 +40,7 @@ public class CommentService {
                 new IllegalArgumentException("멤버 등록안됨"));
 
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
@@ -60,7 +60,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
@@ -84,7 +84,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
