@@ -1,9 +1,8 @@
 package com.sparta.springtrello.domain.kanban.controller;
 
 import com.sparta.springtrello.common.dto.ApiResponseDto;
-import com.sparta.springtrello.domain.kanban.dto.request.KanbanSaveRequestDto;
+import com.sparta.springtrello.domain.kanban.dto.request.KanbanRequestDto;
 import com.sparta.springtrello.domain.kanban.dto.response.KanbanResponseDto;
-import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.service.KanbanService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/workspaces/{id}/board/{boardId}/kanbans")
+@RequestMapping("/workspaces/{id}/boards/{boardId}/kanbans")
 public class kanbanController {
 
     private final KanbanService kanbanService;
@@ -27,7 +26,7 @@ public class kanbanController {
     public ResponseEntity<ApiResponseDto<?>> createKanban(@AuthenticationPrincipal AuthUser authUser,
                                                        @PathVariable Long id,
                                                        @PathVariable Long boardId,
-                                                       @RequestBody KanbanSaveRequestDto requestDto){
+                                                       @RequestBody KanbanRequestDto requestDto){
         kanbanService.createKanban(authUser,id,boardId,requestDto);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
@@ -39,7 +38,7 @@ public class kanbanController {
     public ResponseEntity<ApiResponseDto<?>> updateKanban(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,
                                                @PathVariable Long kanbansId,
-                                               @RequestBody KanbanSaveRequestDto requestDto){
+                                               @RequestBody KanbanRequestDto requestDto){
         kanbanService.updateKanban(authUser,id,kanbansId,requestDto);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
@@ -62,9 +61,8 @@ public class kanbanController {
     @DeleteMapping("{kanbansId}")
     public ResponseEntity<ApiResponseDto<?>> deleteKanban(@AuthenticationPrincipal AuthUser authUser,
                                                @PathVariable Long id,
-                                               @PathVariable Long kanbansId,
-                                               @RequestBody KanbanSaveRequestDto requestDto){
-        kanbanService.deleteKanban(authUser,id,kanbansId,requestDto);
+                                               @PathVariable Long kanbansId){
+        kanbanService.deleteKanban(authUser,id,kanbansId);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 
