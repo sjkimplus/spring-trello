@@ -69,7 +69,7 @@ public class BoardService {
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //Board를 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().toString().equals("CREATOR")) throw new RuntimeException();
 
         //수정하려는 Board 찾기
         Board board = boardRepository.findById(id).orElseThrow();
@@ -94,7 +94,7 @@ public class BoardService {
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //Board를 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().toString().equals("CREATOR")) throw new RuntimeException();
 
         //삭제하려는 Board 찾기
         Board board = boardRepository.findById(id).orElseThrow();
@@ -102,7 +102,7 @@ public class BoardService {
         //Board 수정
         board.deleteBoard();
 
-        //Board 하위계층인 kanban, comment, card의 soft-delete 연동
+        //Board 하위계층인 kanban, ticket, comment의 soft-delete 연동
 
     }
 }

@@ -6,15 +6,12 @@ import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +29,7 @@ public class TicketService {
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().toString().equals("CREATOR")) throw new RuntimeException();
 
         //ticket entity에 등록될 kanban 찾기
         Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
@@ -44,6 +41,8 @@ public class TicketService {
                 member,
                 kanban
         );
+
+        ticketRepository.save(ticket);
 
         return new TicketResponseDto(
                 ticket.getTitle(),
@@ -67,12 +66,12 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketUpdateDto requestDto) {
+    public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketRequestDto requestDto) {
         //ticket을 등록하는 멤버 찾기
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().toString().equals("CREATOR")) throw new RuntimeException();
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
@@ -94,13 +93,13 @@ public class TicketService {
         );
     }
 
-
+    @Transactional
     public void deleteTicket(AuthUser authUser, Long id) {
         //ticket을 등록하는 멤버 찾기
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        //ticket을 등록하려는 유저의 role이 creator인지 확인
+        if (!member.getMemberRole().toString().equals("CREATOR")) throw new RuntimeException();
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 

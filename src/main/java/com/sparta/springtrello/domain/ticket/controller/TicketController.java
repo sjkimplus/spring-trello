@@ -3,7 +3,6 @@ package com.sparta.springtrello.domain.ticket.controller;
 import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.service.TicketService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class TicketController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseDto<TicketResponseDto>> updateTicket(@AuthenticationPrincipal AuthUser authUser,
                                           @PathVariable Long id,
-                                          @RequestBody TicketUpdateDto requestDto) {
+                                          @RequestBody TicketRequestDto requestDto) {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.updateTicket(authUser, id, requestDto)));
     }
 
