@@ -23,7 +23,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
 
     public CommentSaveResponseDto saveComment(AuthUser authUser, Long cardId, CommentSaveRequestDto commentSaveRequestDto) {
@@ -34,15 +33,15 @@ public class CommentService {
             throw new IllegalArgumentException("유저 없음");
         }
 
-        Card card = cardRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
-
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
-
-        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
-            throw new IllegalArgumentException("쓰기/수정 권한 없음");
-        }
+//        Card card = cardRepository.findById(cardId).orElseThrow(() ->
+//                new IllegalArgumentException("card없음"));
+//
+//        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
+//                new IllegalArgumentException("멤버 등록안됨"));
+//
+//        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
+//            throw new IllegalArgumentException("쓰기/수정 권한 없음");
+//        }
 
         Comment comment = commentRepository.save(new Comment(commentSaveRequestDto));
 
@@ -58,15 +57,15 @@ public class CommentService {
             throw new IllegalArgumentException("유저 없음");
         }
 
-        Card card = cardRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
-
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
-
-        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
-            throw new IllegalArgumentException("쓰기/수정 권한 없음");
-        }
+//        Card card = cardRepository.findById(cardId).orElseThrow(() ->
+//                new IllegalArgumentException("card없음"));
+//
+//        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
+//                new IllegalArgumentException("멤버 등록안됨"));
+//
+//        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
+//            throw new IllegalArgumentException("쓰기/수정 권한 없음");
+//        }
 
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("댓글 없음"));
@@ -79,19 +78,19 @@ public class CommentService {
 
     public void deleteComment(Long id, AuthUser authUser) {
 
-        if (userRepository.findById(userId).isPresent()) {
-            throw new IllegalArgumentException("유저 없음");
-        }
-
-        Card card = cardRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
-
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
-
-        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
-            throw new IllegalArgumentException("쓰기/수정 권한 없음");
-        }
+//        if (userRepository.findById(userId).isPresent()) {
+//            throw new IllegalArgumentException("유저 없음");
+//        }
+//
+//        Card card = cardRepository.findById(cardId).orElseThrow(() ->
+//                new IllegalArgumentException("card없음"));
+//
+//        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
+//                new IllegalArgumentException("멤버 등록안됨"));
+//
+//        if (memberRepository.findRoleByUserId(userId).equals(Reader)) {
+//            throw new IllegalArgumentException("쓰기/수정 권한 없음");
+//        }
 
         commentRepository.deleteById(id);
 
