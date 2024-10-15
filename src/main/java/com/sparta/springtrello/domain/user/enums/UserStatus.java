@@ -1,10 +1,10 @@
-package com.sparta.springtrello.domain.user.entity;
+package com.sparta.springtrello.domain.user.enums;
 
 import lombok.Getter;
 
 @Getter
 public enum UserStatus {
-    ACTIVE(UserStatus.Authority.ACTIVE),
+    ACTIVATED(UserStatus.Authority.ACTIVATED),
     DELETED(UserStatus.Authority.DELETED);
 
     private final String status;
@@ -13,12 +13,8 @@ public enum UserStatus {
         this.status = status;
     }
 
-    public String getUserStatus() {
-        return this.status;
-    }
-
     public static class Authority {
-        public static final String ACTIVE = "USER_ACTIVE";
+        public static final String ACTIVATED = "USER_ACTIVATED";
         public static final String DELETED = "USER_DELETED";
     }
 }
