@@ -49,26 +49,26 @@ public class WorkspaceService {
         return new WorkspaceSaveResponseDto(workspace);
     }
 
-    @Transactional(readOnly = true)
-    public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
-
-
-        // 유저검증
-        Long userId = authUser.getId();
-        userService.checkUser(userId);
-
-
-        List<Workspace> workspaces = workspaceRepository.findAllByUserId(userId);
-
-        return workspaces.stream()
-                .map(workspace -> new WorkspaceReadResponseDto(
-                        workspace.getId(),
-                        workspace.getTitle(),
-                        workspace.getTitle(),
-                        workspace.getCreatedAt(),
-                        workspace.getModifiedAt()
-                )).toList();
-    }
+//    @Transactional(readOnly = true)
+//    public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
+//
+//
+//        // 유저검증
+//        Long userId = authUser.getId();
+//        userService.checkUser(userId);
+//
+//
+//        List<Workspace> workspaces = workspaceRepository.findAllByMemberId();
+//
+//        return workspaces.stream()
+//                .map(workspace -> new WorkspaceReadResponseDto(
+//                        workspace.getId(),
+//                        workspace.getTitle(),
+//                        workspace.getTitle(),
+//                        workspace.getCreatedAt(),
+//                        workspace.getModifiedAt()
+//                )).toList();
+//    }
 
     public WorkspaceEditResponseDto editWorkspace(AuthUser authUser,
                                                   WorkspaceEditRequestDto workspaceEditRequestDto,

@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 @Getter
 public class Workspace extends Timestamped {
 
