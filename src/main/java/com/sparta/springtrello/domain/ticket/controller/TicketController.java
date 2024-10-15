@@ -7,9 +7,13 @@ import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.service.TicketService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +45,19 @@ public class TicketController {
                                                                @PathVariable Long id) {
         ticketService.deleteTicket(authUser, id);
         return ResponseEntity.ok(ApiResponseDto.success(null));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<Page<TicketResponseDto>>> searchTickets(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam long workspaceId,
+            @RequestParam(required = false) String ticketKeyword, // 제목 또는 내용이 될수있는 키워드
+            @RequestParam(required = false) String managerName,
+            @RequestParam(required = false) String deadline,
+            @RequestParam(required = false) long boardId)
+    {
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketKeyword, managerName, deadline, boardId)));
     }
 
 }

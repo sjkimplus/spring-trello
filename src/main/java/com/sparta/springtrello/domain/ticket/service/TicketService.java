@@ -9,13 +9,16 @@ import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
+import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class TicketService {
 
     private final MemberRepository memberRepository;
     private final TicketRepository ticketRepository;
+    private final TicketQueryDslRepository ticketQueryDslRepository;
     private final KanbanRepository kanbanRepository;
 
     @Transactional
@@ -110,5 +114,10 @@ public class TicketService {
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
         ticket.delete();
+    }
+
+    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, long boardId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
     }
 }
