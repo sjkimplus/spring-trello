@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -85,5 +87,11 @@ public class KanbanService {
                 .orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
         //칸반 변경된 상태 업데이트
         kanban.deleteKanban(requestDto.getKanbanStatus());
+    }
+
+    public List<Kanban> getKanbans(Long id){
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+        return kanbanRepository.findByBoard(board);
     }
 }
