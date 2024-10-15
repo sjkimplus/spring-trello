@@ -1,4 +1,4 @@
-package com.sparta.springtrello.common.entity;
+package com.sparta.springtrello.common;
 
 import jakarta.persistence.*;
 import lombok.Getter;

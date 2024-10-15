@@ -1,6 +1,5 @@
 package com.sparta.springtrello.domain.workspace.service;
 
-import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
@@ -10,15 +9,12 @@ import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceEditResponseDto;
-import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceReadResponseDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceSaveResponseDto;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

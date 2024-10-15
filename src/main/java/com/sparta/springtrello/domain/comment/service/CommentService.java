@@ -1,14 +1,11 @@
 package com.sparta.springtrello.domain.comment.service;
 
-import com.sparta.springtrello.domain.card.entity.Card;
-import com.sparta.springtrello.domain.card.repository.CardRepository;
 import com.sparta.springtrello.domain.comment.dto.request.CommentEditRequestDto;
 import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentEditResponseDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentSaveResponseDto;
 import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
-import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
