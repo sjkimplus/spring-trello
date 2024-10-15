@@ -18,4 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByWorkspaceId(@Param("workspaceId") Long id);
 
     Optional<Member> findByWorkspaceAndId(Workspace workspace, Long memberId);
+
+    @Query("SELECT m FROM Member m WHERE m.user.id = :userId")
+    Optional<Member> findByUserId(@Param("userId") Long userId);
 }

@@ -5,6 +5,7 @@ import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceEditResponseDto;
+import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceReadResponseDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceSaveResponseDto;
 import com.sparta.springtrello.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/workspaces")
+@RequiredArgsConstructor
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
@@ -29,12 +32,12 @@ public class WorkspaceController {
         return ResponseEntity.ok(ApiResponseDto.success(saveResponseDto));
     }
 
-//    // 워크스페이스 조회
-//    @GetMapping()
-//    public ResponseEntity<ApiResponseDto<List<WorkspaceReadResponseDto>>> readWorkspace(@AuthenticationPrincipal AuthUser authUser) {
-//        List<WorkspaceReadResponseDto> readResponseDto = workspaceService.readWorkspace(authUser);
-//        return ResponseEntity.ok(ApiResponseDto.success(readResponseDto));
-//    }
+    // 워크스페이스 조회
+    @GetMapping()
+    public ResponseEntity<ApiResponseDto<List<WorkspaceReadResponseDto>>> readWorkspace(@AuthenticationPrincipal AuthUser authUser) {
+        List<WorkspaceReadResponseDto> readResponseDto = workspaceService.readWorkspace(authUser);
+        return ResponseEntity.ok(ApiResponseDto.success(readResponseDto));
+    }
 
     // 워크스페이스 수정
     @PutMapping("/{id}")
