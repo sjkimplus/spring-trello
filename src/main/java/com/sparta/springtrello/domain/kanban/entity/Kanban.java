@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "Kanbans")
+@Table(name = "kanbans")
 public class Kanban extends Timestamped {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
-    private Integer order;
+    private Integer kanbanOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
@@ -27,8 +27,8 @@ public class Kanban extends Timestamped {
     @Enumerated(EnumType.STRING)
     private KanbanStatus kanbanStatus;
 
-    public Kanban(Integer order,String title, Board board, KanbanStatus kanbanStatus){
-        this.order = order;
+    public Kanban(Integer kanbanOrder,String title, Board board, KanbanStatus kanbanStatus){
+        this.kanbanOrder = kanbanOrder;
         this.title = title;
         this.board = board;
         this.kanbanStatus = kanbanStatus;
@@ -40,8 +40,8 @@ public class Kanban extends Timestamped {
         this.kanbanStatus = kanbanStatus;
     }
 
-    public void updateOrder(Integer order){
-        this.order = order;
+    public void updateOrder(Integer kanbanOrder){
+        this.kanbanOrder = kanbanOrder;
     }
 
     public void deleteKanban(KanbanStatus kanbanStatus){
