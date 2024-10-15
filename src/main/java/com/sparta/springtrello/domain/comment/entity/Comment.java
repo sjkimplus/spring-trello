@@ -9,8 +9,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.smartcardio.Card;
-
 @Entity
 @NoArgsConstructor
 @Getter
