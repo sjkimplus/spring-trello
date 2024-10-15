@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.ticket.service;
 
+import com.sparta.springtrello.domain.kanban.entity.Kanban;
+import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
@@ -30,10 +32,10 @@ public class TicketService {
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
 
         //ticket entity에 등록될 kanban 찾기
-        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId());
+        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
 
         Ticket ticket = new Ticket(
                 requestDto.getTitle(),
@@ -59,7 +61,7 @@ public class TicketService {
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
-                ticket.getKanban().getId();
+                ticket.getKanban().getId()
         );
 
     }
@@ -67,15 +69,15 @@ public class TicketService {
     @Transactional
     public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketUpdateDto requestDto) {
         //ticket을 등록하는 멤버 찾기
-        Optional<Member> member = memberRepository.findById(authUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
         //ticket entity에 등록될 kanban 찾기
-        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId());
+        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
 
         ticket.update(
                 requestDto.getTitle(),
@@ -95,10 +97,10 @@ public class TicketService {
 
     public void deleteTicket(AuthUser authUser, Long id) {
         //ticket을 등록하는 멤버 찾기
-        Optional<Member> member = memberRepository.findById(authUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
+        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 

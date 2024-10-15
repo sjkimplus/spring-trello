@@ -1,7 +1,9 @@
 package com.sparta.springtrello.domain.workspace.dto.response;
 
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
+import lombok.Getter;
 
+@Getter
 public class WorkspaceSaveResponseDto {
 
     private Long id;

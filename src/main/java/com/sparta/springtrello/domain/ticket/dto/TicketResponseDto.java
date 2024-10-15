@@ -10,7 +10,7 @@ public class TicketResponseDto {
     private String deadline;
     private Long kanbanId;
 
-    public TicketResponseDto (String title, String contents, String deadline, Long kanbanId, Long userId){
+    public TicketResponseDto (String title, String contents, String deadline, Long kanbanId){
         this.title = title;
         this.contents = contents;
         this.deadline = deadline;

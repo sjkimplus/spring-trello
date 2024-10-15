@@ -2,9 +2,8 @@ package com.sparta.springtrello.domain.ticket.entity;
 
 import com.sparta.springtrello.common.Status;
 import com.sparta.springtrello.common.Timestamped;
-import com.sparta.springtrello.domain.list.entity.Lists;
+import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.member.entity.Member;
-import com.sparta.springtrello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

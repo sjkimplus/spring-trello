@@ -26,6 +26,7 @@ public class Board extends Timestamped {
     //배경이미지
     private String image;
 
+    @Enumerated(value = EnumType.STRING)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -12,8 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/workspaces")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/workspaces")
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
