@@ -10,7 +10,7 @@ import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

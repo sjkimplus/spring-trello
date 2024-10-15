@@ -1,11 +1,11 @@
 package com.sparta.springtrello.domain.workspace.controller;
 
 import com.sparta.springtrello.common.dto.ApiResponseDto;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
+import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceEditResponseDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceReadResponseDto;
-import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceSaveResponseDto;
 import com.sparta.springtrello.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;

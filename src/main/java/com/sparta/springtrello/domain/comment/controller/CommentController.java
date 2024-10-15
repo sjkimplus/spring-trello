@@ -6,7 +6,7 @@ import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentEditResponseDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentSaveResponseDto;
 import com.sparta.springtrello.domain.comment.service.CommentService;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

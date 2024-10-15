@@ -2,9 +2,9 @@ package com.sparta.springtrello.domain.workspace.service;
 
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
-import com.sparta.springtrello.domain.user.entity.UserType;
+import com.sparta.springtrello.domain.user.enums.UserRole;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceEditRequestDto;
 import com.sparta.springtrello.domain.workspace.dto.request.WorkspaceSaveRequestDto;
@@ -37,7 +37,7 @@ public class WorkspaceService {
                 new IllegalArgumentException("User not found"));
 
         // 어드민 유저만 워크스페이스 생성가능
-        if (!user.getUserType().equals(UserType.ROLE_ADMIN)) {
+        if (!user.getRole().equals(UserRole.ROLE_ADMIN)) {
             throw new IllegalArgumentException("User is not admin");
         }
 
