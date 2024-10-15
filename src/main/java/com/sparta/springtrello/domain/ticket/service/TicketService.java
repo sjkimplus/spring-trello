@@ -7,11 +7,12 @@ import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
-import com.sparta.springtrello.domain.user.entity.User;
-import com.sparta.springtrello.domain.user.repository.UserRepository;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketService {
 
     private final MemberRepository memberRepository;
-    private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final KanbanRepository kanbanRepository;
 
     @Transactional
-    public Object createTicket(SignUser signUser, TicketRequestDto requestDto) {
+    public TicketResponseDto createTicket(AuthUser authUser, TicketRequestDto requestDto) {
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
@@ -34,14 +35,11 @@ public class TicketService {
         //ticket entity에 등록될 kanban 찾기
         Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId());
 
-        //ticket entity에 등록될 User
-        User user = userRepository.findById(signUser.getId());
-
         Ticket ticket = new Ticket(
                 requestDto.getTitle(),
                 requestDto.getContents(),
                 requestDto.getDeadline(),
-                user,
+                member,
                 kanban
         );
 
@@ -49,29 +47,27 @@ public class TicketService {
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
-                kanban.getId(),
-                user.getId()
+                kanban.getId()
         );
 
     }
 
-    public Object getTicket(Long id) {
+    public TicketResponseDto getTicket(Long id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
         return new TicketResponseDto(
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
-                ticket.getKanban().getId(),
-                ticket.getUser().getId()
+                ticket.getKanban().getId();
         );
 
     }
 
     @Transactional
-    public Object updateTicket(SignUser signUser, Long id, TicketUpdateDto requestDto) {
+    public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketUpdateDto requestDto) {
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Optional<Member> member = memberRepository.findById(authUser.getId());
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
@@ -92,15 +88,14 @@ public class TicketService {
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
-                ticket.getKanban().getId(),
-                ticket.getUser().getId()
+                ticket.getKanban().getId()
         );
     }
 
 
-    public void deleteTicket(SignUser signUser, Long id) {
+    public void deleteTicket(AuthUser authUser, Long id) {
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Optional<Member> member = memberRepository.findById(authUser.getId());
 
         //ticket을 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();

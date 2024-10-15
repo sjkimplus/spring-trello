@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.ticket.entity;
 import com.sparta.springtrello.common.Status;
 import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.list.entity.Lists;
+import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,18 +30,18 @@ public class Ticket extends Timestamped {
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kanban_id")
     private Kanban kanban;
 
-    public Ticket(String title, String contents, String deadline, User user, Kanban kanban) {
+    public Ticket(String title, String contents, String deadline, Member member, Kanban kanban) {
         this.title = title;
         this.contents = contents;
         this.deadline = deadline;
-        this.user = user;
+        this.member = member;
         this.kanban = kanban;
         this.status = Status.ACTIVATED;
     }

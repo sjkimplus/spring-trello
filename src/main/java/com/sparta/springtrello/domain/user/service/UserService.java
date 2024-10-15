@@ -11,7 +11,6 @@ import com.sparta.springtrello.domain.user.dto.response.UserSearchResponseDto;
 import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.enums.UserStatus;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,6 +86,18 @@ public class UserService {
             throw new HotSixException(USER_NOT_FOUND);
 
         return new UserSearchResponseDto(user);
+    }
+
+    // 유저검증용 메서드
+    public void checkUser (Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new HotSixException(USER_NOT_FOUND)
+        );
+
+        if (user.getStatus()==UserStatus.DELETED)
+            throw new HotSixException(USER_NOT_FOUND);
+
     }
 }
 

@@ -5,6 +5,7 @@ import com.sparta.springtrello.domain.board.entity.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,10 @@ public class BoardService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public BoardResponseDto createBoard(SignUser signUser, Long workspaceId, String title, String background, String image) {
+    public BoardResponseDto createBoard(AuthUser authUser, Long workspaceId, String title, String background, String image) {
 
         //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //Board를 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
@@ -48,7 +49,7 @@ public class BoardService {
         );
     }
 
-    public Object getBoard(Long id) {
+    public BoardResponseDto getBoard(Long id) {
         //Board 찾기
         Board board = boardRepository.findById(id).orElseThrow();
 
@@ -63,9 +64,9 @@ public class BoardService {
     }
 
     @Transactional
-    public Object updateBoard(Long id, SignUser signUser, String title, String background, String image) {
+    public BoardResponseDto updateBoard(Long id, AuthUser authUser, String title, String background, String image) {
         //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //Board를 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
@@ -87,10 +88,10 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteBoard(Long id, SignUser signUser) {
+    public void deleteBoard(Long id, AuthUser authUser) {
 
         //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(signUser.getId());
+        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
         //Board를 등록하려는 유저의 role이 createor인지 확인
         if (!member.getRole().equals("CREATOR")) throw new RuntimeException();
