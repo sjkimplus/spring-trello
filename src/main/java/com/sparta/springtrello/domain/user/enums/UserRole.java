@@ -1,4 +1,4 @@
-package com.sparta.springtrello.domain.user.entity;
+package com.sparta.springtrello.domain.user.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,15 +7,15 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum UserType {
+public enum UserRole {
 
     ROLE_USER(Authority.USER),
     ROLE_ADMIN(Authority.ADMIN);
 
-    private final String userRole;
+    private final String role;
 
-    public static UserType of(String role) {
-        return Arrays.stream(UserType.values())
+    public static UserRole of(String role) {
+        return Arrays.stream(UserRole.values())
                 .filter(r -> r.name().equalsIgnoreCase(role))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 UserType"));
