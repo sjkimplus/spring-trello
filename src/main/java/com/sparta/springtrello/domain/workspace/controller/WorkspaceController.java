@@ -24,7 +24,7 @@ public class WorkspaceController {
     // 워크스페이스 생성
     @PostMapping()
     public ResponseEntity<ApiResponseDto<WorkspaceSaveResponseDto>> createWorkspace(@AuthenticationPrincipal AuthUser authUser,
-                                                             @RequestBody WorkspaceSaveRequestDto workspaceSaveRequestDto) {
+                                                                                    @RequestBody WorkspaceSaveRequestDto workspaceSaveRequestDto) {
         WorkspaceSaveResponseDto saveResponseDto = workspaceService.createWorkspace(authUser, workspaceSaveRequestDto);
         return ResponseEntity.ok(ApiResponseDto.success(saveResponseDto));
     }
@@ -39,9 +39,9 @@ public class WorkspaceController {
     // 워크스페이스 수정
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseDto<WorkspaceEditResponseDto>> editWorkspace(@AuthenticationPrincipal AuthUser authUser,
-                                                           @RequestBody WorkspaceEditRequestDto workspaceEditRequestDto,
-                                                           @PathVariable Long id) {
-        WorkspaceEditResponseDto editResponseDto = workspaceService.editWorkspace(authUser, workspaceEditRequestDto,id);
+                                                                                  @RequestBody WorkspaceEditRequestDto workspaceEditRequestDto,
+                                                                                  @PathVariable Long id) {
+        WorkspaceEditResponseDto editResponseDto = workspaceService.editWorkspace(authUser, workspaceEditRequestDto, id);
         return ResponseEntity.ok(ApiResponseDto.success(editResponseDto));
     }
 
