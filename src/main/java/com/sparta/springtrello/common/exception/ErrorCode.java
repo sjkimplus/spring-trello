@@ -15,7 +15,8 @@ public enum ErrorCode {
     KANBAN_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 칸반 입니다."),
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 워크스페이스 입니다."),
     MEMBER_RESIST_DUPLICATION(HttpStatus.BAD_REQUEST, "이미 등록된 멤버입니다."),
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 매니저 입니다.");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 매니저 입니다."),
+    KANBAN_SAME_ORDER(HttpStatus.BAD_REQUEST,"기존의 순서와 같은 순서입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

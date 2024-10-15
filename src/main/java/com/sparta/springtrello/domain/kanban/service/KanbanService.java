@@ -37,7 +37,7 @@ public class KanbanService {
 
     @Transactional
     public void updateKanban(AuthUser authUser, Long id,Long kanbansId, KanbanSaveRequestDto requestDto) {
-    //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
+//        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //해당 칸반 있는지 확인
@@ -48,7 +48,7 @@ public class KanbanService {
 
     @Transactional
     public void updateOrder(AuthUser authUser, Long id, Long kanbansId, Integer newOrder) {
-        //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
+//        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //해당 칸반 있는지 확인
@@ -60,7 +60,7 @@ public class KanbanService {
         }else if(newOrder > oldOrder){
             kanbanRepository.increaseOrderBetween(board,oldOrder+1,newOrder);
         }else{
-            throw new RuntimeException("기존의 순서와 같은 순서입니다.");
+            throw new HotSixException(ErrorCode.KANBAN_SAME_ORDER);
         }
         kanban.updateOrder(newOrder);
         kanbanRepository.save(kanban);
@@ -68,7 +68,7 @@ public class KanbanService {
 
     @Transactional
     public void deleteKanban(AuthUser authUser, Long id, Long kanbansId, KanbanSaveRequestDto requestDto) {
-        //        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
+//        User user = userRepository.findById(authUser.) authUser로 userRole 확인하기
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id).orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //해당 칸반 있는지 확인
@@ -76,7 +76,4 @@ public class KanbanService {
         //칸반 변경된 상태 업데이트
         kanban.deleteKanban(requestDto.getKanbanStatus());
     }
-
-
-
 }
