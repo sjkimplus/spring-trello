@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -29,8 +30,11 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Comment(CommentSaveRequestDto commentSaveRequestDto) {
+    public Comment(CommentSaveRequestDto commentSaveRequestDto, Ticket ticket, Member member) {
         this.content = commentSaveRequestDto.getContent();
+        this.ticket = ticket;
+        this.member = member;
+
     }
 
     public void update(CommentEditRequestDto commentEditRequestDto) {
