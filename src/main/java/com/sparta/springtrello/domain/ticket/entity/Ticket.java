@@ -44,4 +44,15 @@ public class Ticket extends Timestamped {
         this.kanban = kanban;
         this.status = Status.ACTIVATED;
     }
+
+    public void update(String title, String contents, String deadline, Kanban kanban) {
+        this.title = title;
+        this.contents = contents;
+        this.deadline = deadline;
+        this.kanban = kanban;
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
+    }
 }

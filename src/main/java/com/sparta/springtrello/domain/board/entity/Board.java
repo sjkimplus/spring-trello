@@ -46,7 +46,8 @@ public class Board extends Timestamped {
     }
 
     public void updateBoard(String title, String background, String image) {
-        this.title = title;
+        if(title!=null) this.title = title;
+        //배경색이나 이미지 둘중 하나가 반드시 적용될 것이므로 if절 구현하지 않음
         this.background = background;
         this.image = image;
     }

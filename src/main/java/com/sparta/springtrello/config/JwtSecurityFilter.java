@@ -1,6 +1,7 @@
 package com.sparta.springtrello.config;
 
-import com.sparta.springtrello.domain.user.entity.AuthUser;
+import com.sparta.springtrello.domain.user.dto.AuthUser;
+import com.sparta.springtrello.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -33,8 +34,9 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
             @NonNull FilterChain chain
     ) throws ServletException, IOException {
         String authorizationHeader = httpRequest.getHeader("Authorization");
+        String url = httpRequest.getRequestURI();
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !url.startsWith("/users/sign-up") && !url.startsWith("/users/sign-in")) {
             String jwt = jwtUtil.substringToken(authorizationHeader);
             try {
                 Claims claims = jwtUtil.extractClaims(jwt);
@@ -44,7 +46,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 UserRole userRole = UserRole.of(claims.get("userRole", String.class));
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    AuthUser authUser = new AuthUser(userId, email, nickname, userRole);
+                    AuthUser authUser = new AuthUser(userId, email, userRole);
 
                     JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(authUser);
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
