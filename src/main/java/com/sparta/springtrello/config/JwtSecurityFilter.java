@@ -1,5 +1,7 @@
 package com.sparta.springtrello.config;
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
@@ -53,17 +55,21 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
             } catch (SecurityException | MalformedJwtException e) {
-                log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
+                throw new HotSixException(ErrorCode.JWT_INVALID);
+//                log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
+//                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
             } catch (ExpiredJwtException e) {
-                log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
+                throw new HotSixException(ErrorCode.JWT_EXPIRED);
+//                log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
+//                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
             } catch (UnsupportedJwtException e) {
-                log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
-                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
+                throw new HotSixException(ErrorCode.JWT_TYPE_ERROR);
+//                log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
+//                httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
             } catch (Exception e) {
-                log.error("Internal server error", e);
-                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                throw new HotSixException(ErrorCode.INTERNAL_SERVER_ERROR);
+//                log.error("Internal server error", e);
+//                httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
         chain.doFilter(httpRequest, httpResponse);

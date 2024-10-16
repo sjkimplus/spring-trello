@@ -42,7 +42,7 @@
 //                new RuntimeException("User not found"));
 //
 //        // ticket을 등록하려는 유저의 role이 CREATOR인지 확인
-//        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+//        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
 //            throw new RuntimeException("Only creators can create tickets.");
 //        }
 //

@@ -38,11 +38,11 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -59,10 +59,10 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -83,10 +83,10 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 

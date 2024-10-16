@@ -29,6 +29,22 @@ public class UserService {
 
 
     public SignUpResponseDto create(SignUpRequestDto requestDto) {
+
+        if (requestDto.getName().isEmpty() || requestDto.getEmail().isEmpty() || requestDto.getPassword().isEmpty() || requestDto.getRole()==null) {
+            throw new HotSixException(MISSING_FORMAT);
+        }
+        // Validate email format
+        String emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        if (!requestDto.getEmail().matches(emailPattern)) {
+            throw new HotSixException(WRONG_FORMAT); // Throw exception for invalid email format
+        }
+
+        // Validate password format
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        if (!requestDto.getPassword().matches(passwordPattern)) {
+            throw new HotSixException(WRONG_FORMAT); // Throw exception for invalid password format
+        }
+
         String password = passwordEncoder.encode(requestDto.getPassword());
         String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);

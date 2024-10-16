@@ -1,6 +1,7 @@
 package com.sparta.springtrello.config;
 
 
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.user.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,10 +13,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.rmi.ServerException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+
+import static com.sparta.springtrello.common.exception.ErrorCode.TOKEN_NOT_FOUND;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -56,11 +58,8 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        try { // not sure
-            throw new ServerException("Not Found Token");
-        } catch (ServerException e) {
-            throw new RuntimeException(e);
-        }
+        // not sure
+        throw new HotSixException(TOKEN_NOT_FOUND);
     }
 
     public Claims extractClaims(String token) {
@@ -71,4 +70,3 @@ public class JwtUtil {
                 .getBody();
     }
 }
-

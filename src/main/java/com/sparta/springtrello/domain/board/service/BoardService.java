@@ -123,6 +123,6 @@ public class BoardService {
                 new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
         //유저의 권한 확인
-        if (!member.getMemberRole().toString().equals("CREATOR")) throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        if (member.getMemberRole().toString().equals("ROLE_READER")) throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
     }
 }

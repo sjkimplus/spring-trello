@@ -11,15 +11,20 @@ import com.sparta.springtrello.domain.manager.dto.ManagerRequestDto;
 import com.sparta.springtrello.domain.manager.entity.Manager;
 import com.sparta.springtrello.domain.manager.repository.ManagerRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
+import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,7 @@ public class TicketService {
 
     private final MemberRepository memberRepository;
     private final TicketRepository ticketRepository;
+    private final TicketQueryDslRepository ticketQueryDslRepository;
     private final KanbanRepository kanbanRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
@@ -42,16 +48,20 @@ public class TicketService {
     @Transactional
     public TicketResponseDto createTicket(AuthUser authUser, TicketRequestDto requestDto) {
 
-        //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow(() ->
-                new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
-
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().toString().equals("CREATOR")) throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
-
         //ticket entity에 등록될 kanban 찾기
         Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow(() ->
                 new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
+
+        //ticket을 등록하는 멤버 찾기
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+
+        //ticket을 등록하려는 유저의 role이 reader라면 금지
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+            throw new RuntimeException();
+        }
+
+
 
         Ticket ticket = new Ticket(
                 requestDto.getTitle(),
@@ -94,12 +104,6 @@ public class TicketService {
 
     @Transactional
     public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketRequestDto requestDto) {
-        //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow(() ->
-                new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
-
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().toString().equals("CREATOR")) throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
@@ -107,6 +111,16 @@ public class TicketService {
         //ticket entity에 등록될 kanban 찾기
         Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow(() ->
                 new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
+
+        //ticket을 등록하는 멤버 찾기
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+
+        //ticket을 등록하려는 유저의 role이 reader인지 확인
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+            throw new RuntimeException();
+        }
+
 
         ticket.update(
                 requestDto.getTitle(),
@@ -120,15 +134,16 @@ public class TicketService {
 
     @Transactional
     public void deleteTicket(AuthUser authUser, Long id) {
-        //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow(() ->
-                new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
-
-        //ticket을 등록하려는 유저의 role이 creator인지 확인
-        if (!member.getMemberRole().toString().equals("CREATOR")) throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
+
+        //ticket을 등록하는 멤버 찾기
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+
+        //ticket을 등록하려는 유저의 role이 reader인지 확인
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) throw new RuntimeException();
 
         ticket.delete();
     }
@@ -148,6 +163,11 @@ public class TicketService {
 
         return getTicket(id);
 
+    }
+
+    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, String boardId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
     }
 
 }

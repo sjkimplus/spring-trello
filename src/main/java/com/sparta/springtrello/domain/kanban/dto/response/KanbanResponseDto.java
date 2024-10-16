@@ -12,6 +12,10 @@ public class KanbanResponseDto {
     private String title;
     private List<TicketResponseDto> ticketResponseDtos;
 
+    public KanbanResponseDto(String title) {
+        this.title = title;
+    }
+
     public KanbanResponseDto(Kanban kanban, List<TicketResponseDto> ticketResponseDtos) {
         this.id = kanban.getId();
         this.title = kanban.getTitle();
