@@ -2,7 +2,7 @@ package com.sparta.springtrello.domain.board.entity;
 
 import com.sparta.springtrello.common.Status;
 import com.sparta.springtrello.common.Timestamped;
-import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,11 +34,11 @@ public class Board extends Timestamped {
     private Workspace workspace;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public Board(User user, Workspace workspace, String title, String background, String image) {
-        this.user = user;
+    public Board(Member member, Workspace workspace, String title, String background, String image) {
+        this.member = member;
         this.workspace = workspace;
         this.title = title;
         this.background = background;
@@ -47,8 +47,7 @@ public class Board extends Timestamped {
     }
 
     public void updateBoard(String title, String background, String image) {
-        if(title!=null) this.title = title;
-        //배경색이나 이미지 둘중 하나가 반드시 적용될 것이므로 if절 구현하지 않음
+        this.title = title;
         this.background = background;
         this.image = image;
     }

@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.kanban.controller;
 import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.kanban.dto.request.KanbanRequestDto;
 import com.sparta.springtrello.domain.kanban.dto.response.KanbanResponseDto;
+import com.sparta.springtrello.domain.kanban.dto.response.KanbanSimpleResponseDto;
 import com.sparta.springtrello.domain.kanban.service.KanbanService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards/{id}/kanbans")
-public class kanbanController {
+public class KanbanController {
 
     private final KanbanService kanbanService;
 
@@ -66,7 +67,7 @@ public class kanbanController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<KanbanResponseDto>> getKanbans(@PathVariable Long id){
+    public ResponseEntity<List<KanbanSimpleResponseDto>> getKanbans(@PathVariable Long id){
         return ResponseEntity.ok(kanbanService.getKanbans(id));
     }
 }

@@ -22,5 +22,6 @@ public interface KanbanRepository extends JpaRepository<Kanban, Long> {
     @Query("UPDATE Kanban k SET k.kanbanOrder = k.kanbanOrder - 1 WHERE k.board = :board AND k.kanbanOrder BETWEEN :startOrder AND :endOrder")
     void decreaseOrderBetween(@Param("board") Board board, @Param("startOrder") Integer startOrder, @Param("endOrder") Integer endOrder);
 
-    List<Kanban> findByBoard(Board board);
+    List<Kanban> findAllByBoard_Id(Long boardId);
+
 }
