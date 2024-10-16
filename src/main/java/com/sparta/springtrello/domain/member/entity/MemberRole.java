@@ -9,7 +9,8 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum MemberRole {
-    ROLE_CREATOR(Authority.CREATOR),
+    ROLE_WORKSPACE(Authority.WORKSPACE),
+    ROLE_BOARD(Authority.BOARD),
     ROLE_READER(Authority.READER),
     ROLE_DELETE(Authority.DELETE);
 
@@ -23,7 +24,8 @@ public enum MemberRole {
     }
 
     public static class Authority {
-        public static final String CREATOR = "ROLE_CREATOR";
+        public static final String WORKSPACE = "ROLE_WORKSPACE";
+        public static final String BOARD = "ROLE_BOARD";
         public static final String READER = "ROLE_READER";
         public static final String DELETE = "ROLE_DELETE";
     }

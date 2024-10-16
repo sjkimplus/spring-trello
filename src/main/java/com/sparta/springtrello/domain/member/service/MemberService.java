@@ -38,6 +38,13 @@ public class MemberService {
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
@@ -47,8 +54,8 @@ public class MemberService {
             throw new HotSixException(ErrorCode.MEMBER_RESIST_DUPLICATION);
         }
         //멤버로 등록
-        Member member = new Member(user,workspace,requestDto.getMemberRole());
-        memberRepository.save(member);
+        Member savedMember = new Member(user,workspace,requestDto.getMemberRole());
+        memberRepository.save(savedMember);
     }
 
     public List<MemberResponseDto> getMembers(long id) {
@@ -68,15 +75,21 @@ public class MemberService {
     @Transactional
     public void deleteMember(AuthUser authUser,Long id, Long memberId) {
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
         //해당 워크스페이스에 해당 멤버가 있는지 확인
-        Member member = memberRepository.findByWorkspaceAndId(workspace, memberId)
+        Member saveMember = memberRepository.findByWorkspaceAndId(workspace, memberId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
-        member.deleteMember();
+        saveMember.deleteMember();
    }
 
    public void existMember(Long userId,Long id) {
