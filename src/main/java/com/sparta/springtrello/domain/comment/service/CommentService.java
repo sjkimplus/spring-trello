@@ -1,6 +1,8 @@
 package com.sparta.springtrello.domain.comment.service;
 
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.comment.dto.request.CommentEditRequestDto;
 import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentEditResponseDto;
@@ -34,14 +36,14 @@ public class CommentService {
         userService.checkUser(userId);
 
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
 
         if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         Comment comment = commentRepository.save(new Comment(commentSaveRequestDto, ticket, member));
@@ -55,17 +57,17 @@ public class CommentService {
         userService.checkUser(userId);
 
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("댓글 없음"));
+                new HotSixException(ErrorCode.COMMENT_NOT_FOUND));
 
         comment.update(commentEditRequestDto);
         commentRepository.save(comment);
@@ -79,13 +81,13 @@ public class CommentService {
         userService.checkUser(userId);
 
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         commentRepository.deleteById(id);

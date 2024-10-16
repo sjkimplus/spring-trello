@@ -22,7 +22,11 @@ public enum ErrorCode {
     DO_NOT_INVITATION_WORKSPACE(HttpStatus.NOT_FOUND,"존재하지 않는 멤버입니다."),
 
     // JWT
-    JWT_UNSAVABLE(HttpStatus.BAD_REQUEST, "JWT 토큰을 쿠키에 저장하는데 실패 했습니다.");
+    JWT_UNSAVABLE(HttpStatus.BAD_REQUEST, "JWT 토큰을 쿠키에 저장하는데 실패 했습니다."),
+
+    // Ticket
+    TICKET_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 티켓입니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 댓글입니다.");
 
 
 
