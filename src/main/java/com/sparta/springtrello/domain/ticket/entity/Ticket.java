@@ -26,6 +26,7 @@ public class Ticket extends Timestamped {
     @Column(nullable = false)
     private String deadline;
 
+    @Enumerated(value = EnumType.STRING)
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
