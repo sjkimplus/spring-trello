@@ -46,7 +46,6 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
                 )
                 .from(ticket)
                 .leftJoin(ticket.member, member)
-                .leftJoin(member.user, user)
                 .leftJoin(ticket.kanban, kanban)
                 .leftJoin(kanban.board, board)
                 .leftJoin(board.workspace, workspace)
@@ -78,8 +77,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
 
     private BooleanExpression sameWorkspace(long id) {
         // tickets that are in my current workspace
-//        System.out.println(Long.ValueOf(ticket.kanban.board.workspace.id)));
-        return ticket.kanban.board.workspace.id.eq(id);
+        return ticket.member.workspace.id.eq(id);
     }
     private BooleanExpression titleOrContentContains(String keyword) {
         if (keyword == null) return null;
@@ -92,9 +90,8 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
     }
 
     private BooleanExpression sameBoard(String id) {
-        Long value = Long.valueOf(id); // Converts string to Long
 
-        return id != null ? ticket.kanban.board.id.eq(value) : null;
+        return id != null ? ticket.kanban.board.id.eq(Long.valueOf(id)) : null;
     }
 
     private BooleanExpression managerName(String managerName) {
