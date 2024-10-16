@@ -80,16 +80,14 @@ public class WorkspaceService {
         Long userId = authUser.getId();
         userService.checkUser(userId);
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
+
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
                 new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
         // Member가 해당 워크스페이스에 속해 있는지 확인
-        if (!workspace.getMembers().contains(member)) {
-            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
-        }
+        Member member = memberRepository.findByWorkspaceIdAndUserId(id,authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
         if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
@@ -108,8 +106,9 @@ public class WorkspaceService {
         Long userId = authUser.getId();
         userService.checkUser(userId);
 
-        Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
+        // Member가 해당 워크스페이스에 속해 있는지 확인
+        Member member = memberRepository.findByWorkspaceIdAndUserId(id,authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
         if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
