@@ -1,6 +1,8 @@
 package com.sparta.springtrello.domain.comment.service;
 
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.comment.dto.request.CommentEditRequestDto;
 import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
 import com.sparta.springtrello.domain.comment.dto.response.CommentEditResponseDto;
@@ -40,7 +42,7 @@ public class CommentService {
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -60,7 +62,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
@@ -84,7 +86,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 

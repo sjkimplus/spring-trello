@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.workspace.service;
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
@@ -88,7 +90,7 @@ public class WorkspaceService {
         }
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -108,7 +110,7 @@ public class WorkspaceService {
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
