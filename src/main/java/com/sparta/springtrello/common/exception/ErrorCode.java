@@ -8,6 +8,7 @@ public enum ErrorCode {
 
     // 서버에러
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부서버 에러"),
+    TOKEN_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "토큰을 찾지 못함"),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 유저 입니다."),
