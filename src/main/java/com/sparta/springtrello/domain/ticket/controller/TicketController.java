@@ -27,7 +27,6 @@ public class TicketController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDto<TicketResponseDto>> getTicket(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.getTicket(id)));
-
     }
 
     @PutMapping("/{id}")

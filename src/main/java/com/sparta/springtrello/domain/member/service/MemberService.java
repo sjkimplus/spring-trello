@@ -5,6 +5,7 @@ import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.dto.response.UserResponse;
@@ -31,12 +32,19 @@ public class MemberService {
     private final UserService userService;
 
     @Transactional
-    public void saveMember(AuthUser authUser, long id,
-                           long userId,
+    public void saveMember(AuthUser authUser,
+                           long id,
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
         userService.checkUser(authUser.getId());
-        User user = userRepository.findById(userId)
+        //사용자의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //사용자의 멤버 역할로 권한 확인
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
+        User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
                 .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
@@ -45,8 +53,8 @@ public class MemberService {
             throw new HotSixException(ErrorCode.MEMBER_RESIST_DUPLICATION);
         }
         //멤버로 등록
-        Member member = new Member(user,workspace,requestDto.getMemberRole());
-        memberRepository.save(member);
+        Member savedMember = new Member(user,workspace,requestDto.getMemberRole());
+        memberRepository.save(savedMember);
     }
 
     public List<MemberResponseDto> getMembers(long id) {
@@ -64,17 +72,23 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
+    public void deleteMember(AuthUser authUser,Long id, Long memberId) {
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
         //해당 워크스페이스에 해당 멤버가 있는지 확인
-        Member member = memberRepository.findByWorkspaceAndId(workspace, memberId)
+        Member saveMember = memberRepository.findByWorkspaceAndId(workspace, memberId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
-        member.deleteMember(requestDto.getMemberRole());
+        saveMember.deleteMember();
    }
 
    public void existMember(Long userId,Long id) {

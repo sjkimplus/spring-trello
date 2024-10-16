@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface KanbanRepository extends JpaRepository<Kanban, Long> {
 
     @Query("SELECT MAX(k.kanbanOrder) FROM Kanban k WHERE k.board = :board")
@@ -20,4 +22,5 @@ public interface KanbanRepository extends JpaRepository<Kanban, Long> {
     @Query("UPDATE Kanban k SET k.kanbanOrder = k.kanbanOrder - 1 WHERE k.board = :board AND k.kanbanOrder BETWEEN :startOrder AND :endOrder")
     void decreaseOrderBetween(@Param("board") Board board, @Param("startOrder") Integer startOrder, @Param("endOrder") Integer endOrder);
 
+    List<Kanban> findByBoard(Board board);
 }

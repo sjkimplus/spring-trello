@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.ticket.service;
 import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
@@ -31,8 +32,10 @@ public class TicketService {
         //ticket을 등록하는 멤버 찾기
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        //ticket을 등록하려는 유저의 role이 reader라면 금지
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+            throw new RuntimeException();
+        }
 
         //ticket entity에 등록될 kanban 찾기
         Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
@@ -71,8 +74,10 @@ public class TicketService {
         //ticket을 등록하는 멤버 찾기
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        //ticket을 등록하려는 유저의 role이 reader인지 확인
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+            throw new RuntimeException();
+        }
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
@@ -99,8 +104,8 @@ public class TicketService {
         //ticket을 등록하는 멤버 찾기
         Member member = memberRepository.findById(authUser.getId()).orElseThrow();
 
-        //ticket을 등록하려는 유저의 role이 createor인지 확인
-        if (!member.getMemberRole().equals("CREATOR")) throw new RuntimeException();
+        //ticket을 등록하려는 유저의 role이 reader인지 확인
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) throw new RuntimeException();
 
         Ticket ticket = ticketRepository.findById(id).orElseThrow();
 

@@ -1,8 +1,12 @@
 package com.sparta.springtrello.config;
 
+import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
+import com.sparta.springtrello.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -40,7 +45,6 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/sign-up", "/users/sign-in").permitAll()
-//                        .requestMatchers("/admin/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .build();

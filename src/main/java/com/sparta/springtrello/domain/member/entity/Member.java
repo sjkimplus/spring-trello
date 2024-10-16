@@ -23,7 +23,7 @@ public class Member extends Timestamped {
     @JoinColumn(name = "workspace_id", nullable = false)
     private Workspace workspace;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private MemberRole memberRole;
 
     public Member (User user,Workspace workspace, MemberRole memberRole){
@@ -32,7 +32,7 @@ public class Member extends Timestamped {
         this.memberRole = memberRole;
     }
 
-    public void deleteMember(MemberRole memberRole) {
-        this.memberRole = memberRole;
+    public void deleteMember() {
+        this.memberRole = MemberRole.ROLE_DELETE;
     }
 }
