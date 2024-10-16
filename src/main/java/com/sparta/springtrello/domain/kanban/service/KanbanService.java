@@ -8,7 +8,11 @@ import com.sparta.springtrello.domain.kanban.dto.request.KanbanRequestDto;
 import com.sparta.springtrello.domain.kanban.dto.response.KanbanResponseDto;
 import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
+import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
+import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
+import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
@@ -30,14 +34,22 @@ public class KanbanService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final WorkspaceRepository workspaceRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void createKanban(AuthUser authUser, Long id, KanbanRequestDto requestDto) {
         //유저 확인
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //칸반 순서를 위한 order 자동 생성
         Integer maxOrder = kanbanRepository.findMaxOrderByBoard(board);
         Integer newOrder = maxOrder ==null? 1: maxOrder +1;
@@ -49,6 +61,12 @@ public class KanbanService {
     @Transactional
     public void updateKanban(AuthUser authUser, Long id,Long kanbansId, KanbanRequestDto requestDto) {
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
@@ -62,6 +80,12 @@ public class KanbanService {
     @Transactional
     public void updateOrder(AuthUser authUser, Long id, Long kanbansId, Integer newOrder) {
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
@@ -84,6 +108,12 @@ public class KanbanService {
     @Transactional
     public void deleteKanban(AuthUser authUser, Long id, Long kanbansId) {
         userService.checkUser(authUser.getId());
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        //멤버 역할로 권한 부여
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
+        }
         //해당 보드 있는지 확인
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));

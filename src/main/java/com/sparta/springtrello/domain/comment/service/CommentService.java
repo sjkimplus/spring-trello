@@ -42,7 +42,7 @@ public class CommentService {
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -62,7 +62,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -86,7 +86,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 

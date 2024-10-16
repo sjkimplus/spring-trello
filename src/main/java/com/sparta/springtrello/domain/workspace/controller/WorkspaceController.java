@@ -24,7 +24,6 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
     // 워크스페이스 생성
-    @PreAuthorize("!hasAuthority('ROLE_CREATOR')")
     @PostMapping()
     public ResponseEntity<ApiResponseDto<WorkspaceSaveResponseDto>> createWorkspace(@AuthenticationPrincipal AuthUser authUser,
                                                                                     @RequestBody WorkspaceSaveRequestDto workspaceSaveRequestDto) {

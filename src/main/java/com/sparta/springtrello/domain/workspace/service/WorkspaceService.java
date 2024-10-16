@@ -48,6 +48,8 @@ public class WorkspaceService {
 
         Workspace workspace = workspaceRepository.save(new Workspace(workspaceSaveRequestDto));
 
+        Member member = new Member(user,workspace,MemberRole.ROLE_WORKSPACE);
+        memberRepository.save(member);
         return new WorkspaceSaveResponseDto(workspace);
     }
 
@@ -90,7 +92,7 @@ public class WorkspaceService {
         }
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
@@ -110,7 +112,7 @@ public class WorkspaceService {
                 new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
