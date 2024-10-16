@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/workspaces/{id}/boards/{boardId}/kanbans")
+@RequestMapping("/boards/{id}/kanbans")
 public class kanbanController {
 
     private final KanbanService kanbanService;
@@ -25,9 +25,8 @@ public class kanbanController {
     @PostMapping
     public ResponseEntity<ApiResponseDto<?>> createKanban(@AuthenticationPrincipal AuthUser authUser,
                                                        @PathVariable Long id,
-                                                       @PathVariable Long boardId,
                                                        @RequestBody KanbanRequestDto requestDto){
-        kanbanService.createKanban(authUser,id,boardId,requestDto);
+        kanbanService.createKanban(authUser,id,requestDto);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 
@@ -67,8 +66,7 @@ public class kanbanController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<KanbanResponseDto>> getKanbans(@PathVariable Long id,
-                                                              @PathVariable Long boardId){
-        return ResponseEntity.ok(kanbanService.getKanbans(id,boardId));
+    public ResponseEntity<List<KanbanResponseDto>> getKanbans(@PathVariable Long id){
+        return ResponseEntity.ok(kanbanService.getKanbans(id));
     }
 }

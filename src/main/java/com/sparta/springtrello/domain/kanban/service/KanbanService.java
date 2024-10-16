@@ -32,13 +32,11 @@ public class KanbanService {
     private final WorkspaceRepository workspaceRepository;
 
     @Transactional
-    public void createKanban(AuthUser authUser, Long id,Long boardId, KanbanRequestDto requestDto) {
+    public void createKanban(AuthUser authUser, Long id, KanbanRequestDto requestDto) {
         //유저 확인
         userService.checkUser(authUser.getId());
-        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
-                new IllegalArgumentException("Workspace not found"));
         //해당 보드 있는지 확인
-        Board board = boardRepository.findById(boardId)
+        Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         //칸반 순서를 위한 order 자동 생성
         Integer maxOrder = kanbanRepository.findMaxOrderByBoard(board);
@@ -96,10 +94,8 @@ public class KanbanService {
         kanban.deleteKanban();
     }
 
-    public List<KanbanResponseDto> getKanbans(Long id,Long boardId){
-        Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
-                new IllegalArgumentException("Workspace not found"));
-        Board board = boardRepository.findById(boardId)
+    public List<KanbanResponseDto> getKanbans(Long id){
+        Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
         return kanbanRepository.findByBoard(board).stream()
                 .map(kanban -> new KanbanResponseDto(kanban.getTitle()))

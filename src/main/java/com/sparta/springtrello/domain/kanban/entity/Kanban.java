@@ -38,7 +38,6 @@ public class Kanban extends Timestamped {
     public void updateKanban(String title, Board board){
         this.title = title;
         this.board = board;
-        this.status = Status.ACTIVATED;
     }
 
     public void updateOrder(Integer kanbanOrder){
