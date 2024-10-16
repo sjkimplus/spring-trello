@@ -1,9 +1,12 @@
 package com.sparta.springtrello.domain.user.enums;
 
+import com.sparta.springtrello.common.exception.HotSixException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
+
+import static com.sparta.springtrello.common.exception.ErrorCode.USER_TYPE_NOT_FOUND;
 
 @Getter
 @RequiredArgsConstructor
@@ -18,7 +21,7 @@ public enum UserRole {
         return Arrays.stream(UserRole.values())
                 .filter(r -> r.name().equalsIgnoreCase(role))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 UserType"));
+                .orElseThrow(() -> new HotSixException(USER_TYPE_NOT_FOUND));
     }
 
     public static class Authority {

@@ -75,7 +75,8 @@ public class MemberService {
     public void deleteMember(AuthUser authUser,Long id, Long memberId) {
         userService.checkUser(authUser.getId());
         //유저의 멤버 정보 가져오기
-        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(id,authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
         //멤버 역할로 권한 부여
         if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
