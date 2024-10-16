@@ -51,6 +51,7 @@ public class TicketService {
                 member,
                 kanban
         );
+        ticketRepository.save(ticket);
 
         return new TicketResponseDto(
                 ticket.getTitle(),
@@ -116,7 +117,7 @@ public class TicketService {
         ticket.delete();
     }
 
-    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, long boardId) {
+    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, String boardId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
     }

@@ -55,7 +55,7 @@ public class TicketController {
             @RequestParam(required = false) String ticketKeyword, // 제목 또는 내용이 될수있는 키워드
             @RequestParam(required = false) String managerName,
             @RequestParam(required = false) String deadline,
-            @RequestParam(required = false) long boardId)
+            @RequestParam(required = false) String boardId)
     {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketKeyword, managerName, deadline, boardId)));
     }

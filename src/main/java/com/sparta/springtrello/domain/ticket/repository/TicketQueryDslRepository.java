@@ -12,7 +12,7 @@ public interface TicketQueryDslRepository {
             String ticketKeyword,
             String managerName,
             String deadline,
-            long boardId,
+            String boardId,
             Pageable pageable
     );
 }

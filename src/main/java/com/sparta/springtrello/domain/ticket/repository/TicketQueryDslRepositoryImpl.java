@@ -13,9 +13,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.sparta.springtrello.domain.board.entity.QBoard.board;
 import static com.sparta.springtrello.domain.kanban.entity.QKanban.kanban;
 import static com.sparta.springtrello.domain.ticket.entity.QTicket.ticket;
 import static com.sparta.springtrello.domain.member.entity.QMember.member;
+import static com.sparta.springtrello.domain.user.entity.QUser.user;
+import static com.sparta.springtrello.domain.workspace.entity.QWorkspace.workspace;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
             String ticketKeyword,
             String managerName,
             String deadline,
-            long boardId,
+            String boardId,
             Pageable pageable
     ) {
         List<TicketResponseDto> results = queryFactory
@@ -43,7 +46,11 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
                 )
                 .from(ticket)
                 .leftJoin(ticket.member, member)
+                .leftJoin(member.user, user)
                 .leftJoin(ticket.kanban, kanban)
+                .leftJoin(kanban.board, board)
+                .leftJoin(board.workspace, workspace)
+
                 .where(
                         sameWorkspace(workspaceId),
                         titleOrContentContains(ticketKeyword),
@@ -60,6 +67,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
                 .from(ticket)
                 .where(
                         sameWorkspace(workspaceId),
+                        sameBoard(boardId),
                         titleOrContentContains(ticketKeyword),
                         dueAt(deadline),
                         managerName(managerName)
@@ -70,6 +78,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
 
     private BooleanExpression sameWorkspace(long id) {
         // tickets that are in my current workspace
+//        System.out.println(Long.ValueOf(ticket.kanban.board.workspace.id)));
         return ticket.kanban.board.workspace.id.eq(id);
     }
     private BooleanExpression titleOrContentContains(String keyword) {
@@ -79,12 +88,15 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
     }
 
     private BooleanExpression dueAt(String deadline) {
-        if (deadline != null) {
-            return ticket.deadline.eq(deadline);
-        } else {
-            return null;
-        }
+        return deadline != null ? ticket.deadline.eq(deadline) : null;
     }
+
+    private BooleanExpression sameBoard(String id) {
+        Long value = Long.valueOf(id); // Converts string to Long
+
+        return id != null ? ticket.kanban.board.id.eq(value) : null;
+    }
+
     private BooleanExpression managerName(String managerName) {
         return managerName != null ? member.user.name.containsIgnoreCase(managerName) : null;
     }
