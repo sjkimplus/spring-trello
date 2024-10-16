@@ -43,4 +43,9 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 
+    // 최적화위한 더미데이터 삽입API
+    @PostMapping("/pushTickets")
+    public ResponseEntity<String> pushTickets() {
+     return ResponseEntity.ok(ticketService.pushTickets());
+    }
 }
