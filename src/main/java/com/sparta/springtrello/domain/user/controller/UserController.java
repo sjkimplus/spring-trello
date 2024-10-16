@@ -1,17 +1,15 @@
 package com.sparta.springtrello.domain.user.controller;
 
+import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.config.JwtUtil;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.dto.request.SignInRequestDto;
 import com.sparta.springtrello.domain.user.dto.request.SignUpRequestDto;
 import com.sparta.springtrello.domain.user.dto.request.UserDeleteRequestDto;
-import com.sparta.springtrello.domain.user.dto.response.SignInResponseDto;
-import com.sparta.springtrello.domain.user.dto.response.SignUpResponseDto;
-import com.sparta.springtrello.domain.user.dto.response.UserSearchResponseDto;
 import com.sparta.springtrello.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,23 +23,23 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignUpResponseDto> create(@Valid @RequestBody SignUpRequestDto requestDto) {
-        return ResponseEntity.ok(userService.create(requestDto));
+    public ResponseEntity<ApiResponseDto<?>> create(@Valid @RequestBody SignUpRequestDto requestDto) {
+        return ResponseEntity.ok(ApiResponseDto.success(userService.create(requestDto)));
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<SignInResponseDto> login(@Valid @RequestBody SignInRequestDto requestDto) {
-        return ResponseEntity.ok(userService.login(jwtUtil, requestDto));
+    public ResponseEntity<ApiResponseDto<?>> login(@Valid @RequestBody SignInRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.OK).header("Authorization",(userService.login(jwtUtil, requestDto)).getToken()).build();
     }
 
     @DeleteMapping
-    public String delete(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody UserDeleteRequestDto requestDto) {
-        return userService.delete(authUser.getId(), requestDto);
+    public ResponseEntity<ApiResponseDto<?>> delete(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody UserDeleteRequestDto requestDto) {
+        return ResponseEntity.ok(ApiResponseDto.success(userService.delete(authUser.getId(), requestDto)));
     }
 
     @GetMapping
-    public ResponseEntity<UserSearchResponseDto> find(@AuthenticationPrincipal AuthUser authUser) {
-        return ResponseEntity.ok(userService.find(authUser.getId()));
+    public ResponseEntity<ApiResponseDto<?>> find(@AuthenticationPrincipal AuthUser authUser) {
+        return ResponseEntity.ok(ApiResponseDto.success(userService.find(authUser.getId())));
     }
 }
 
