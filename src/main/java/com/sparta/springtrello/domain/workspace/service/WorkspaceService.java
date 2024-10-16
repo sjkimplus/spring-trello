@@ -37,11 +37,11 @@ public class WorkspaceService {
         // 유저검증
         Long id = authUser.getId();
         User user = userRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("User not found"));
+                new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         // 어드민 유저만 워크스페이스 생성가능
         if (!user.getRole().equals(UserRole.ROLE_ADMIN)) {
-            throw new IllegalArgumentException("User is not admin");
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         Workspace workspace = workspaceRepository.save(new Workspace(workspaceSaveRequestDto));
@@ -77,19 +77,19 @@ public class WorkspaceService {
         userService.checkUser(userId);
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("User not found"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(()->
-                new IllegalArgumentException("Workspace not found"));
+                new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
         // Member가 해당 워크스페이스에 속해 있는지 확인
         if (!workspace.getMembers().contains(member)) {
-            throw new IllegalArgumentException("해당 워크스페이스에 속해 있지 않음.");
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         workspace.update(workspaceEditRequestDto);
@@ -105,15 +105,15 @@ public class WorkspaceService {
         userService.checkUser(userId);
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("User not found"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
         // 수정, 삭제 불가(읽기 권한일 경우)
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("워크스페이스 없음"));
+                new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
         workspaceRepository.deleteById(id);
     }

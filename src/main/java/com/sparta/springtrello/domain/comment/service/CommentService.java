@@ -34,14 +34,14 @@ public class CommentService {
         userService.checkUser(userId);
 
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("card없음"));
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalArgumentException("멤버 등록안됨"));
+                new HotSixException(ErrorCode.USER_NO_AUTHORITY));
 
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
-            throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
+            throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
         Comment comment = commentRepository.save(new Comment(commentSaveRequestDto, ticket, member));
@@ -60,7 +60,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
@@ -84,7 +84,7 @@ public class CommentService {
         Member member = memberRepository.findByUserId(userId).orElseThrow(() ->
                 new IllegalArgumentException("멤버 등록안됨"));
 
-        if (!member.getMemberRole().equals(MemberRole.ROLE_CREATOR)) {
+        if (!member.getMemberRole().equals(MemberRole.CREATOR)) {
             throw new IllegalArgumentException("CREATOR만 수정, 삭제할 수 있음.");
         }
 
