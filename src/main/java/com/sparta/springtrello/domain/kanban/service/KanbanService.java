@@ -40,15 +40,17 @@ public class KanbanService {
     public void createKanban(AuthUser authUser, Long id, KanbanRequestDto requestDto) {
         //유저 확인
         userService.checkUser(authUser.getId());
+        //해당 보드 있는지 확인
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //유저의 멤버 정보 가져오기
-        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
         //멤버 역할로 권한 부여
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
-        //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id)
-                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
 
         //칸반 순서를 위한 order 자동 생성
         Integer maxOrder = kanbanRepository.findMaxOrderByBoard(board);
@@ -61,15 +63,19 @@ public class KanbanService {
     @Transactional
     public void updateKanban(AuthUser authUser, Long id,Long kanbansId, KanbanRequestDto requestDto) {
         userService.checkUser(authUser.getId());
+
+        //해당 보드 있는지 확인
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //유저의 멤버 정보 가져오기
-        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
         //멤버 역할로 권한 부여
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
-        //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id)
-                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //해당 칸반 있는지 확인
         Kanban kanban = kanbanRepository.findById(kanbansId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
@@ -80,15 +86,18 @@ public class KanbanService {
     @Transactional
     public void updateOrder(AuthUser authUser, Long id, Long kanbansId, Integer newOrder) {
         userService.checkUser(authUser.getId());
+        //해당 보드 있는지 확인
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //유저의 멤버 정보 가져오기
-        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
         //멤버 역할로 권한 부여
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
-        //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id)
-                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //해당 칸반 있는지 확인
         Kanban kanban = kanbanRepository.findById(kanbansId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
@@ -108,15 +117,19 @@ public class KanbanService {
     @Transactional
     public void deleteKanban(AuthUser authUser, Long id, Long kanbansId) {
         userService.checkUser(authUser.getId());
+
+        //해당 보드 있는지 확인
+        Board board = boardRepository.findById(id)
+                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //유저의 멤버 정보 가져오기
-        Member member = memberRepository.findByUserId(authUser.getId()).orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
         //멤버 역할로 권한 부여
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
-        //해당 보드 있는지 확인
-        Board board = boardRepository.findById(id)
-                .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
+
         //해당 칸반 있는지 확인
         Kanban kanban = kanbanRepository.findById(kanbansId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.KANBAN_NOT_FOUND));

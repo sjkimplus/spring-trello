@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.board.service;
 
+import com.sparta.springtrello.common.exception.ErrorCode;
+import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.board.dto.BoardResponseDto;
 import com.sparta.springtrello.domain.board.entity.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
@@ -25,8 +27,9 @@ public class BoardService {
     @Transactional
     public BoardResponseDto createBoard(AuthUser authUser, Long workspaceId, String title, String background, String image) {
 
-        //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
+        //유저의 멤버 정보 가져오기
+        Member member = memberRepository.findByWorkspaceIdAndUserId(workspaceId,authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //Board를 등록하려는 유저의 role이 reader인지 확인
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
@@ -68,16 +71,18 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDto updateBoard(Long id, AuthUser authUser, String title, String background, String image) {
+
+        //수정하려는 Board 찾기
+        Board board = boardRepository.findById(id).orElseThrow();
+
         //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //Board를 등록하려는 유저의 role이 reader인지 확인
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
             throw new RuntimeException();
         }
-
-        //수정하려는 Board 찾기
-        Board board = boardRepository.findById(id).orElseThrow();
 
         //Board 수정
         board.updateBoard(title, background, image);
@@ -94,17 +99,17 @@ public class BoardService {
 
     @Transactional
     public void deleteBoard(Long id, AuthUser authUser) {
+        //삭제하려는 Board 찾기
+        Board board = boardRepository.findById(id).orElseThrow();
 
         //Board를 등록하는 멤버 찾기
-        Member member = memberRepository.findById(authUser.getId()).orElseThrow();
+        Member member = memberRepository.findByWorkspaceIdAndUserId(board.getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //Board를 등록하려는 유저의 role이 reader인지 확인
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
             throw new RuntimeException();
         }
-
-        //삭제하려는 Board 찾기
-        Board board = boardRepository.findById(id).orElseThrow();
 
         //Board 수정
         board.deleteBoard();
