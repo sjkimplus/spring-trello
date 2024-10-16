@@ -5,6 +5,7 @@ import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
 import com.sparta.springtrello.domain.member.entity.Member;
+import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.dto.response.UserResponse;
@@ -31,12 +32,13 @@ public class MemberService {
     private final UserService userService;
 
     @Transactional
-    public void saveMember(AuthUser authUser, long id,
-                           long userId,
+    public void saveMember(AuthUser authUser,
+                           long id,
+                           String email,
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
         userService.checkUser(authUser.getId());
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
                 .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
@@ -64,7 +66,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(AuthUser authUser,Long id, Long memberId, MemberSaveRequestDto requestDto) {
+    public void deleteMember(AuthUser authUser,Long id, Long memberId) {
         userService.checkUser(authUser.getId());
         //불러올 워크페이스 존재 여부 확인
         Workspace workspace = workspaceRepository.findById(id)
@@ -74,7 +76,7 @@ public class MemberService {
         Member member = memberRepository.findByWorkspaceAndId(workspace, memberId)
                 .orElseThrow(() -> new HotSixException(ErrorCode.MEMBER_NOT_FOUND));
 
-        member.deleteMember(requestDto.getMemberRole());
+        member.deleteMember();
    }
 
    public void existMember(Long userId,Long id) {

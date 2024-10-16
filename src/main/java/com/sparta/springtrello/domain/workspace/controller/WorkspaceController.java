@@ -10,6 +10,7 @@ import com.sparta.springtrello.domain.workspace.dto.response.WorkspaceSaveRespon
 import com.sparta.springtrello.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
     // 워크스페이스 생성
+    @PreAuthorize("!hasAuthority('ROLE_CREATOR')")
     @PostMapping()
     public ResponseEntity<ApiResponseDto<WorkspaceSaveResponseDto>> createWorkspace(@AuthenticationPrincipal AuthUser authUser,
                                                                                     @RequestBody WorkspaceSaveRequestDto workspaceSaveRequestDto) {
