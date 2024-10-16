@@ -37,6 +37,12 @@ public class Ticket extends Timestamped {
     @JoinColumn(name = "kanban_id")
     private Kanban kanban;
 
+    @Column(name = "views")
+    private Integer dailyViewCount = 0;
+
+    @Column(name = "totalviews")
+    private Integer totalViewCount = 0;
+
     public Ticket(String title, String contents, String deadline, Member member, Kanban kanban) {
         this.title = title;
         this.contents = contents;
@@ -55,5 +61,10 @@ public class Ticket extends Timestamped {
 
     public void delete() {
         this.status = Status.DELETED;
+    }
+
+    public void increaseViewCount(){
+        this.dailyViewCount ++;
+        this.totalViewCount ++;//조회수 증가 메서드
     }
 }

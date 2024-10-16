@@ -19,15 +19,20 @@ import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
+import com.sparta.springtrello.domain.ticketviewhistory.entity.TicketViewHistory;
+import com.sparta.springtrello.domain.ticketviewhistory.repository.TicketViewHistoryRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
+import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +48,7 @@ public class TicketService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final ManagerRepository managerRepository;
+    private final TicketViewHistoryRepository ticketViewHistoryRepository;
 
 
     @Transactional
@@ -77,9 +83,24 @@ public class TicketService {
 
     }
 
-    public TicketDetailResponseDto getTicket(Long id) {
+    @Transactional
+    public TicketDetailResponseDto getTicket(AuthUser authUser,Long id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
+        //조회수 중복 증가 방지 위한 시간
+        LocalDate today = LocalDate.now();
+        //조회수 중복 방지를 위한 user생성
+        User user = User.fromAuthUser(authUser);
+        //이미 본 user인지 판별
+        boolean alreadyViewed = ticketViewHistoryRepository.existsByUserIdAndTicketIdAndViewDate(user.getId(),id,today);
+        //본유저가 아니라면 해당 ticket의 조회수 증가
+        if(!alreadyViewed){
+            ticket.increaseViewCount();
+            ticketRepository.save(ticket);
+
+            TicketViewHistory history = new TicketViewHistory(user,ticket,today);
+            ticketViewHistoryRepository.save(history);
+        }
 
         List<Comment> commentList = commentRepository.findAllByTicket(ticket);
         List<CommentSaveResponseDto> commentSaveResponseDtoList = commentList.stream()
@@ -161,13 +182,19 @@ public class TicketService {
             managerRepository.save(manager);
         }
 
-        return getTicket(id);
+        return getTicket(authUser,id);
 
     }
 
     public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, String boardId) {
         Pageable pageable = PageRequest.of(page - 1, size);
         return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
+    }
+
+    @Scheduled(cron = "0 35 04 * * ?")
+    @Transactional
+    public void resetDailyViewCount(){
+        ticketRepository.resetDailyViewCount();
     }
 
 }

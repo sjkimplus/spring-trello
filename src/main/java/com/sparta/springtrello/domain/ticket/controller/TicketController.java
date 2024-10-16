@@ -38,8 +38,9 @@ public class TicketController {
      * @return : 조회한 Ticket의 정보
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDto<TicketDetailResponseDto>> getTicket(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponseDto.success(ticketService.getTicket(id)));
+    public ResponseEntity<ApiResponseDto<TicketDetailResponseDto>> getTicket(@AuthenticationPrincipal AuthUser authUser,
+                                                                             @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.getTicket(authUser,id)));
 
     }
 
