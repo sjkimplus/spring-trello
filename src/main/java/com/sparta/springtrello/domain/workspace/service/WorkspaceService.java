@@ -48,6 +48,8 @@ public class WorkspaceService {
 
         Workspace workspace = workspaceRepository.save(new Workspace(workspaceSaveRequestDto));
 
+        Member member = new Member(user,workspace,MemberRole.ROLE_WORKSPACE);
+        memberRepository.save(member);
         return new WorkspaceSaveResponseDto(workspace);
     }
 

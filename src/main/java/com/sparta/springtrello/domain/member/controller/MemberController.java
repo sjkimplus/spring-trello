@@ -27,9 +27,8 @@ public class MemberController {
     @PostMapping("/workspaces/{id}/members")
     public ResponseEntity<ApiResponseDto<?>> saveMember(@AuthenticationPrincipal AuthUser authUser,
                                                       @PathVariable Long id,
-                                                      @RequestParam String email,
                                                       @RequestBody MemberSaveRequestDto requestDto){
-        memberService.saveMember(authUser,id,email,requestDto);
+        memberService.saveMember(authUser,id,requestDto);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 

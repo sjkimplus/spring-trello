@@ -34,18 +34,17 @@ public class MemberService {
     @Transactional
     public void saveMember(AuthUser authUser,
                            long id,
-                           String email,
                            MemberSaveRequestDto requestDto) {
         //사용자 인증 확인
         userService.checkUser(authUser.getId());
-        //유저의 멤버 정보 가져오기
+        //사용자의 멤버 정보 가져오기
         Member member = memberRepository.findByUserId(authUser.getId())
                 .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
-        //멤버 역할로 권한 부여
+        //사용자의 멤버 역할로 권한 확인
         if (!member.getMemberRole().equals(MemberRole.ROLE_WORKSPACE)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(()->new HotSixException(ErrorCode.USER_NOT_FOUND));
         Workspace workspace = workspaceRepository
                 .findById(id).orElseThrow(()-> new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
