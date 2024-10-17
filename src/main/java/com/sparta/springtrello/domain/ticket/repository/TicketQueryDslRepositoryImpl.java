@@ -22,13 +22,14 @@ import static com.sparta.springtrello.domain.workspace.entity.QWorkspace.workspa
 
 @Repository
 @RequiredArgsConstructor
-public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
+public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<TicketResponseDto> searchTickets(
             long workspaceId,
-            String ticketKeyword,
+            String ticketTitle,
+            String ticketContents,
             String managerName,
             String deadline,
             String boardId,
@@ -52,7 +53,8 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
 
                 .where(
                         sameWorkspace(workspaceId),
-                        titleOrContentContains(ticketKeyword),
+                        titleContains(ticketTitle),
+                        contentContains(ticketContents),
                         dueAt(deadline),
                         managerName(managerName)
                 )
@@ -67,7 +69,8 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
                 .where(
                         sameWorkspace(workspaceId),
                         sameBoard(boardId),
-                        titleOrContentContains(ticketKeyword),
+                        titleContains(ticketTitle),
+                        contentContains(ticketContents),
                         dueAt(deadline),
                         managerName(managerName)
                 ).fetchOne();
@@ -76,13 +79,15 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
     }
 
     private BooleanExpression sameWorkspace(long id) {
-        // tickets that are in my current workspace
         return ticket.member.workspace.id.eq(id);
     }
-    private BooleanExpression titleOrContentContains(String keyword) {
-        if (keyword == null) return null;
-        return ticket.title.containsIgnoreCase(keyword)
-                .or(ticket.contents.containsIgnoreCase(keyword));
+
+    private BooleanExpression titleContains(String title) {
+        return title != null ? ticket.title.containsIgnoreCase(title) : null;
+    }
+
+    private BooleanExpression contentContains(String contents) {
+        return contents != null ? ticket.contents.containsIgnoreCase(contents) : null;
     }
 
     private BooleanExpression dueAt(String deadline) {
@@ -90,7 +95,6 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository{
     }
 
     private BooleanExpression sameBoard(String id) {
-
         return id != null ? ticket.kanban.board.id.eq(Long.valueOf(id)) : null;
     }
 
