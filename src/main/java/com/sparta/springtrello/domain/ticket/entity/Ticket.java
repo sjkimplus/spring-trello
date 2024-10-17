@@ -11,6 +11,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Getter
+@Table(
+        name = "ticket",
+        indexes = {
+                @Index(name = "idx_ticket_workspace_id", columnList = "member_id"),
+                @Index(name = "idx_ticket_title", columnList = "title"),  // 제목에 대한 인덱스
+                @Index(name = "idx_ticket_contents", columnList = "contents"),  // 내용에 대한 인덱스
+                @Index(name = "idx_ticket_deadline", columnList = "deadline"),
+                @Index(name = "idx_kanban_board_id", columnList = "kanban_id")
+        }
+)
 public class Ticket extends Timestamped {
 
     @Id

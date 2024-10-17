@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 public interface TicketQueryDslRepository {
     Page<TicketResponseDto> searchTickets(
             long workspaceId,
-            String ticketKeyword,
+            String ticketTitle,
+            String ticketContents,
             String managerName,
             String deadline,
             String boardId,

@@ -40,3 +40,5 @@ out/
 .vscode/
 
 .properties
+
+.env

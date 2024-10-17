@@ -90,12 +90,18 @@ public class TicketController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam long workspaceId,
-            @RequestParam(required = false) String ticketKeyword, // 제목 또는 내용이 될수있는 키워드
+            @RequestParam(required = false) String ticketTitle, // 제목 또는 내용이 될수있는 키워드
+            @RequestParam(required = false) String ticketContents,
             @RequestParam(required = false) String managerName,
             @RequestParam(required = false) String deadline,
             @RequestParam(required = false) String boardId)
     {
-        return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketKeyword, managerName, deadline, boardId)));
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId)));
     }
 
+    // 최적화위한 더미데이터 삽입API
+    @PostMapping("/pushTickets")
+    public ResponseEntity<String> pushTickets() {
+     return ResponseEntity.ok(ticketService.pushTickets());
+    }
 }
