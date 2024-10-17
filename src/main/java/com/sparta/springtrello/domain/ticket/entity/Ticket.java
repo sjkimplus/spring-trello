@@ -71,4 +71,5 @@ public class Ticket extends Timestamped {
     public void delete() {
         this.status = Status.DELETED;
     }
+
 }

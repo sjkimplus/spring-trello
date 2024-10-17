@@ -53,6 +53,9 @@ dependencies {
     // aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // slack alarm
     implementation("com.slack.api:bolt:1.43.1")
     implementation("com.slack.api:bolt-servlet:1.43.1")
