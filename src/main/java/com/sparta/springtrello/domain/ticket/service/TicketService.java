@@ -274,7 +274,7 @@ public class TicketService {
     @Scheduled(cron = "0 0 0 * * ?") // 자정마다 실행
     @Transactional
     public void saveViewCountsToDB() {
-        Set<String> keys = redisTemplate.keys("ticket:view:*");
+        Set<String> keys = redisTemplate.keys("ticket:*");
         // Redis 캐시 초기화
         redisTemplate.delete(keys);
     }
