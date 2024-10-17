@@ -2,6 +2,8 @@ package com.sparta.springtrello.domain.ticket.service;
 
 import com.sparta.springtrello.common.exception.ErrorCode;
 import com.sparta.springtrello.common.exception.HotSixException;
+import com.sparta.springtrello.domain.board.entity.Board;
+import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.comment.dto.response.CommentSaveResponseDto;
 import com.sparta.springtrello.domain.comment.entity.Comment;
 import com.sparta.springtrello.domain.comment.repository.CommentRepository;
@@ -20,7 +22,11 @@ import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
+import com.sparta.springtrello.domain.user.entity.User;
+import com.sparta.springtrello.domain.user.repository.UserRepository;
 import com.sparta.springtrello.domain.user.service.UserService;
+import com.sparta.springtrello.domain.workspace.entity.Workspace;
+import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,8 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,9 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final TicketQueryDslRepository ticketQueryDslRepository;
     private final KanbanRepository kanbanRepository;
+    private final BoardRepository boardRepository;
+    private final WorkspaceRepository workspaceRepository;
+    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final ManagerRepository managerRepository;
@@ -60,7 +68,6 @@ public class TicketService {
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
             throw new RuntimeException();
         }
-
 
 
         Ticket ticket = new Ticket(
@@ -165,9 +172,56 @@ public class TicketService {
 
     }
 
-    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, String boardId) {
+    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketTitle, String ticketContents, String managerName, String deadline, String boardId) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
+        return ticketQueryDslRepository.searchTickets(workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId, pageable);
     }
 
+
+    @Transactional
+    public String pushTickets() {
+        int batchSize = 100;
+        List<Ticket> tickets = new ArrayList<>(batchSize);
+        Set<String> existingTitles = new HashSet<>();
+
+        // 예시로 생성된 Workspace와 User를 사용합니다. 실제로는 데이터베이스에서 조회해야 할 수 있습니다.
+        Workspace workspace = workspaceRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("워크스페이스를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("워크스페이스를 찾을 수 없습니다."));
+
+        Board board = new Board(member, workspace, "Sample Board", "blue", null);
+        boardRepository.save(board);
+
+        Kanban kanban = new Kanban(1, "Sample Kanban", board);
+        kanbanRepository.save(kanban);
+
+        for (int i = 1; i <= 1000000; i++) {
+            String randomTitle;
+
+            do {
+                randomTitle = generateRandomTitle();
+            } while (existingTitles.contains(randomTitle));
+            existingTitles.add(randomTitle);
+
+
+            Ticket ticket = new Ticket(randomTitle, "contents", "deadline", member, kanban);
+            tickets.add(ticket);
+
+            if (i % batchSize == 0) {
+                ticketRepository.saveAll(tickets);
+                tickets.clear();
+            }
+        }
+
+        if (!tickets.isEmpty()) {
+            ticketRepository.saveAll(tickets);
+        }
+
+        return "Successfully saved 1 million random tickets.";
+    }
+
+    public String generateRandomTitle() {
+        return UUID.randomUUID().toString().substring(0, 10);
+    }
 }
