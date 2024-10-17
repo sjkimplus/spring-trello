@@ -12,7 +12,7 @@ import java.util.List;
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByKanban_id(Long id);
 
-    @Modifying
-    @Query("UPDATE Ticket t SET t.dailyViewCount = 0")
-    void resetDailyViewCount();
+//    @Modifying
+//    @Query("UPDATE Ticket t SET t.dailyViewCount = 0")
+//    void resetDailyViewCount();
 }

@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.ticket.controller;
 import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.manager.dto.ManagerRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.TicketRankingDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.service.TicketService;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -97,6 +100,11 @@ public class TicketController {
             @RequestParam(required = false) String boardId)
     {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketKeyword, managerName, deadline, boardId)));
+    }
+
+  @GetMapping("/ranks")
+    public ResponseEntity<ApiResponseDto<List<TicketRankingDto>>> getRanking() {
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.getDailyViewRanking()));
     }
 
 }

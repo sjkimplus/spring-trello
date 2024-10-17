@@ -14,7 +14,7 @@ public class TicketDetailResponseDto {
     private List<CommentSaveResponseDto> commentList;
     private List<Long> memberList;
 
-    public TicketDetailResponseDto(String title, String contents, String deadline, Long kanbanId, List<CommentSaveResponseDto> commentList, List<Long> memberList) {
+    public TicketDetailResponseDto(String title, String contents, String deadline, Long kanbanId, List<CommentSaveResponseDto> commentList, List<Long> memberList ) {
         this.title = title;
         this.contents = contents;
         this.deadline = deadline;

@@ -14,13 +14,12 @@ import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.TicketRankingDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
-import com.sparta.springtrello.domain.ticketviewhistory.entity.TicketViewHistory;
-import com.sparta.springtrello.domain.ticketviewhistory.repository.TicketViewHistoryRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.service.UserService;
@@ -28,13 +27,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +50,7 @@ public class TicketService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final ManagerRepository managerRepository;
-    private final TicketViewHistoryRepository ticketViewHistoryRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     @Transactional
@@ -59,14 +61,13 @@ public class TicketService {
                 new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader라면 금지
-        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new RuntimeException();
         }
-
 
 
         Ticket ticket = new Ticket(
@@ -84,22 +85,27 @@ public class TicketService {
     }
 
     @Transactional
-    public TicketDetailResponseDto getTicket(AuthUser authUser,Long id) {
+    public TicketDetailResponseDto getTicket(AuthUser authUser, Long id) {
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
-        //조회수 중복 증가 방지 위한 시간
-        LocalDate today = LocalDate.now();
+
         //조회수 중복 방지를 위한 user생성
         User user = User.fromAuthUser(authUser);
         //이미 본 user인지 판별
-        boolean alreadyViewed = ticketViewHistoryRepository.existsByUserIdAndTicketIdAndViewDate(user.getId(),id,today);
+        String ticketViews = "ticket:view:" + id + ":" + user.getId();
+        Object value = redisTemplate.opsForValue().get(ticketViews);
+        boolean alreadyViewed = value != null && Boolean.parseBoolean(value.toString());
         //본유저가 아니라면 해당 ticket의 조회수 증가
-        if(!alreadyViewed){
-            ticket.increaseViewCount();
-            ticketRepository.save(ticket);
+        if (!alreadyViewed) {
+            //redis에서 조회수 가져오기
+            String viewCount = "ticket:view:" + id;
+            String currentViewCount = (String) redisTemplate.opsForValue().get(viewCount);
+            int newViewCount = (currentViewCount != null ? Integer.parseInt(currentViewCount) : 0) + 1;
 
-            TicketViewHistory history = new TicketViewHistory(user,ticket,today);
-            ticketViewHistoryRepository.save(history);
+            // 사용자 조회 기록 저장
+            redisTemplate.opsForValue().set(ticketViews, "true");  // Redis에 "true"로 저장
+            // Redis에 조회수 업데이트
+            redisTemplate.opsForValue().set("ticket:view:" + id, String.valueOf(newViewCount));
         }
 
         List<Comment> commentList = commentRepository.findAllByTicket(ticket);
@@ -108,7 +114,7 @@ public class TicketService {
 
         List<Manager> managerList = managerRepository.findAllByTicket(ticket);
         List<Long> memberList = new ArrayList<>();
-        for(Manager manager : managerList) {
+        for (Manager manager : managerList) {
             memberList.add(manager.getMember().getUser().getId());
         }
 
@@ -134,11 +140,11 @@ public class TicketService {
                 new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader인지 확인
-        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new RuntimeException();
         }
 
@@ -160,8 +166,8 @@ public class TicketService {
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader인지 확인
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) throw new RuntimeException();
@@ -176,13 +182,13 @@ public class TicketService {
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         List<Long> memberList = requestDto.getMemberList();
-        for(Long memberId : memberList) {
+        for (Long memberId : memberList) {
             Member member = memberRepository.findById(memberId).orElseThrow();
             Manager manager = new Manager(ticket, member);
             managerRepository.save(manager);
         }
 
-        return getTicket(authUser,id);
+        return getTicket(authUser, id);
 
     }
 
@@ -191,10 +197,35 @@ public class TicketService {
         return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
     }
 
-    @Scheduled(cron = "0 35 04 * * ?")
+    public List<TicketRankingDto> getDailyViewRanking() {
+        Set<String> keys = redisTemplate.keys("ticket:view:*:count");
+
+        Map<Long,Integer> viewCounts = new HashMap<>();
+
+        for (String key : keys) {
+            String[] parts = key.split(":");
+            Long ticketId = Long.parseLong(parts[2]); // `ticket:view:티켓ID`
+            String countStr = (String) redisTemplate.opsForValue().get(key);
+
+            if (countStr != null) {
+                int count = Integer.parseInt(countStr);
+                viewCounts.put(ticketId, viewCounts.getOrDefault(ticketId, 0) + count);
+            }
+        }
+
+        // 랭킹 정렬
+       return viewCounts.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // 높은 조회수 우선
+                .map(entry -> new TicketRankingDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") // 자정마다 실행
     @Transactional
-    public void resetDailyViewCount(){
-        ticketRepository.resetDailyViewCount();
+    public void saveViewCountsToDB() {
+        Set<String> keys = redisTemplate.keys("ticket:view:*");
+        // Redis 캐시 초기화
+        redisTemplate.delete(keys);
     }
 
 }
