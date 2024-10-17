@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -80,7 +81,6 @@ public class TicketLockTest {
 
         AuthUser authUser = new AuthUser(1L, "email@email.com", UserRole.ROLE_ADMIN);
         Long id = savedTicket.getId();
-        TicketRequestDto requestDto = new TicketRequestDto("UpTitle","UpContents","3000-00-00",1L);
 
         //when
         int testCount = 1000;
@@ -94,6 +94,8 @@ public class TicketLockTest {
         for (int i = 0; i < testCount; i++) {
             executorService.submit(() -> {
                 try {
+                    TicketRequestDto requestDto = new TicketRequestDto("title" + UUID.randomUUID(),
+                            "UpContents","3000-00-00",1L);
                     ticketService.updateTicket(authUser, id, requestDto);
                     successfulUpdates.incrementAndGet();
                 } catch (Exception e) {
@@ -118,9 +120,81 @@ public class TicketLockTest {
 
     }
 
+/*
     @Test
-    void 낙관락() {
+    void 낙관락() throws InterruptedException {
+
+        User user = new User(1L, "email@email.com", UserRole.ROLE_ADMIN);
+        ReflectionTestUtils.setField(user, "name", "User");
+        ReflectionTestUtils.setField(user, "password", "Password");
+        ReflectionTestUtils.setField(user, "status", UserStatus.ACTIVATED);
+        userRepository.save(user);
+
+        Workspace workspace = new Workspace(1L, "title", "content", null);
+        workspaceRepository.save(workspace);
+
+        Member member = new Member(user, workspace, MemberRole.ROLE_WORKSPACE);
+        ReflectionTestUtils.setField(member, "id", 1L);
+        memberRepository.save(member);
+
+        Board board = new Board(member, workspace, "boardtitle", "background", "image");
+        ReflectionTestUtils.setField(board, "id", 1L);
+        boardRepository.save(board);
+
+        Kanban kanban = new Kanban(1, "kanbantitle", board);
+        ReflectionTestUtils.setField(kanban, "id", 1L);
+        kanbanRepository.save(kanban);
+
+        Ticket ticket = new Ticket("tickettitle","ticketcontent","2000-00-00",member,kanban);
+        ReflectionTestUtils.setField(ticket, "id", 1L);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        AuthUser authUser = new AuthUser(1L, "email@email.com", UserRole.ROLE_ADMIN);
+        Long id = savedTicket.getId();
+
+
+        //when
+        int testCount = 10000;
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        CountDownLatch latch = new CountDownLatch(testCount);
+
+        // 성공 횟수 추적 변수
+        AtomicInteger successfulUpdates = new AtomicInteger(0);
+
+        // 예외 발생 횟수를 추적하기 위한 변수
+        AtomicInteger optimisticLockExceptionCount = new AtomicInteger(0);
+
+        long startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < testCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    TicketRequestDto requestDto = new TicketRequestDto("title" + UUID.randomUUID(),
+                            "UpContents","3000-00-00",1L);
+                    ticketService.updateTicket(authUser, id, requestDto);
+                    successfulUpdates.incrementAndGet();
+                } catch (OptimisticLockingFailureException e) {
+                    optimisticLockExceptionCount.incrementAndGet();
+                    System.out.println("낙관적 락 충돌: " + e.getMessage());
+                }finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await(); // 모든 스레드가 작업을 완료할 때까지 대기
+        executorService.shutdown();
+
+        long endTime = System.currentTimeMillis();
+        long durationInMillis = endTime - startTime;
+        double durationInSeconds = durationInMillis / 1000.0;
+
+        System.out.println("성공한 업데이트 수: " + successfulUpdates.get());
+        System.out.println("실패한 업데이트 수: " + optimisticLockExceptionCount.get());
+        System.out.println("테스트 실행 시간: " + durationInSeconds + "초");
+
+        assertNotNull(successfulUpdates.get());
 
     }
-
+*/
 }
