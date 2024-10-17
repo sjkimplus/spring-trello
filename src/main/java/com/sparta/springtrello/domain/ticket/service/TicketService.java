@@ -29,9 +29,6 @@ import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -52,7 +49,7 @@ public class TicketService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final ManagerRepository managerRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> viewCountRepository;
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
@@ -98,19 +95,19 @@ public class TicketService {
         User user = User.fromAuthUser(authUser);
         //이미 본 user인지 판별
         String ticketViews = "ticket:user:" + id + ":" + user.getId();
-        Object value = redisTemplate.opsForValue().get(ticketViews);
+        Object value = viewCountRepository.opsForValue().get(ticketViews);
         boolean alreadyViewed = value != null && Boolean.parseBoolean(value.toString());
         //본유저가 아니라면 해당 ticket의 조회수 증가
         if (!alreadyViewed) {
             //redis에서 조회수 가져오기
             String viewCount = "ticket:view:" + id;
-            String currentViewCount = (String) redisTemplate.opsForValue().get(viewCount);
+            String currentViewCount = (String) viewCountRepository.opsForValue().get(viewCount);
             int newViewCount = (currentViewCount != null ? Integer.parseInt(currentViewCount) : 0) + 1;
 
             // 사용자 조회 기록 저장
-            redisTemplate.opsForValue().set(ticketViews, "true");  // Redis에 "true"로 저장
+            viewCountRepository.opsForValue().set(ticketViews, "true");  // Redis에 "true"로 저장
             // Redis에 조회수 업데이트
-            redisTemplate.opsForValue().set("ticket:view:" + id, String.valueOf(newViewCount));
+            viewCountRepository.opsForValue().set("ticket:view:" + id, String.valueOf(newViewCount));
         }
 
         List<Comment> commentList = commentRepository.findAllByTicket(ticket);
@@ -249,14 +246,14 @@ public class TicketService {
     }
 
     public List<TicketRankingDto> getDailyViewRanking() {
-        Set<String> keys = redisTemplate.keys("ticket:view:*");
+        Set<String> keys = viewCountRepository.keys("ticket:view:*");
 
         Map<Long,Integer> viewCounts = new HashMap<>();
 
         for (String key : keys) {
             String[] parts = key.split(":");
             Long ticketId = Long.parseLong(parts[2]); // `ticket:view:티켓ID`
-            String countStr = (String) redisTemplate.opsForValue().get(key);
+            String countStr = (String) viewCountRepository.opsForValue().get(key);
 
             if (countStr != null) {
                 int count = Integer.parseInt(countStr);
@@ -274,9 +271,9 @@ public class TicketService {
     @Scheduled(cron = "0 0 0 * * ?") // 자정마다 실행
     @Transactional
     public void saveViewCountsToDB() {
-        Set<String> keys = redisTemplate.keys("ticket:*");
+        Set<String> keys = viewCountRepository.keys("ticket:*");
         // Redis 캐시 초기화
-        redisTemplate.delete(keys);
+        viewCountRepository.delete(keys);
     }
 
 }
