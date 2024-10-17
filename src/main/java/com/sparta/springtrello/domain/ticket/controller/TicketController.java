@@ -89,18 +89,19 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.addManagerToTicket(authUser, id, requestDto)));
     }
 
-//    @GetMapping
-//    public ResponseEntity<ApiResponseDto<Page<TicketResponseDto>>> searchTickets(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "5") int size,
-//            @RequestParam long workspaceId,
-//            @RequestParam(required = false) String ticketKeyword, // 제목 또는 내용이 될수있는 키워드
-//            @RequestParam(required = false) String managerName,
-//            @RequestParam(required = false) String deadline,
-//            @RequestParam(required = false) String boardId)
-//    {
-//        return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketKeyword, managerName, deadline, boardId)));
-//    }
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<Page<TicketResponseDto>>> searchTickets(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam long workspaceId,
+            @RequestParam(required = false) String ticketTitle, // 제목 또는 내용이 될수있는 키워드
+            @RequestParam(required = false) String ticketContents,
+            @RequestParam(required = false) String managerName,
+            @RequestParam(required = false) String deadline,
+            @RequestParam(required = false) String boardId)
+    {
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId)));
+    }
 
   @GetMapping("/ranks")
     public ResponseEntity<ApiResponseDto<List<TicketRankingDto>>> getRanking() {

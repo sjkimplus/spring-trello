@@ -29,6 +29,9 @@ import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -194,10 +197,11 @@ public class TicketService {
 
     }
 //
-//    public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketKeyword, String managerName, String deadline, String boardId) {
-//        Pageable pageable = PageRequest.of(page - 1, size);
-//        return ticketQueryDslRepository.searchTickets(workspaceId, ticketKeyword, managerName, deadline, boardId, pageable);
-//    }
+public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketTitle, String ticketContents, String managerName, String deadline, String boardId) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return ticketQueryDslRepository.searchTickets(workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId, pageable);
+}
+
     @Transactional
     public String pushTickets() {
         int batchSize = 100;
