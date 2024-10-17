@@ -53,6 +53,12 @@ dependencies {
     // aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+    // slack alarm
+    implementation("com.slack.api:bolt:1.43.1")
+    implementation("com.slack.api:bolt-servlet:1.43.1")
+    implementation("com.slack.api:bolt-jetty:1.43.1")
+    implementation("org.slf4j:slf4j-simple:1.7.36")
+
 }
 
 tasks.named('test') {

@@ -1,5 +1,6 @@
 package com.sparta.springtrello.domain.ticket.dto;
 
+import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import lombok.Getter;
 
 @Getter
@@ -9,11 +10,13 @@ public class TicketResponseDto {
     private String contents;
     private String deadline;
     private Long kanbanId;
+    private Long memberId;
 
-    public TicketResponseDto (String title, String contents, String deadline, Long kanbanId){
-        this.title = title;
-        this.contents = contents;
-        this.deadline = deadline;
-        this.kanbanId = kanbanId;
+    public TicketResponseDto (Ticket ticket){
+        this.title = ticket.getTitle();
+        this.contents = ticket.getContents();
+        this.deadline = ticket.getDeadline();
+        this.kanbanId = ticket.getKanban().getId();
+        this.memberId = ticket.getMember().getId();
     }
 }

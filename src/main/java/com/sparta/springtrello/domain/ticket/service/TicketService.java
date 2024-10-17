@@ -4,20 +4,27 @@ import com.sparta.springtrello.common.exception.ErrorCode;
 import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.board.entity.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
+import com.sparta.springtrello.domain.comment.dto.response.CommentSaveResponseDto;
+import com.sparta.springtrello.domain.comment.entity.Comment;
+import com.sparta.springtrello.domain.comment.repository.CommentRepository;
 import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
+import com.sparta.springtrello.domain.manager.dto.ManagerRequestDto;
+import com.sparta.springtrello.domain.manager.entity.Manager;
+import com.sparta.springtrello.domain.manager.repository.ManagerRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
+import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketUpdateDto;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import com.sparta.springtrello.domain.user.entity.User;
 import com.sparta.springtrello.domain.user.repository.UserRepository;
+import com.sparta.springtrello.domain.user.service.UserService;
 import com.sparta.springtrello.domain.workspace.entity.Workspace;
 import com.sparta.springtrello.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,19 +48,24 @@ public class TicketService {
     private final BoardRepository boardRepository;
     private final WorkspaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final UserService userService;
+    private final ManagerRepository managerRepository;
+
 
     @Transactional
     public TicketResponseDto createTicket(AuthUser authUser, TicketRequestDto requestDto) {
 
         //ticket entity에 등록될 kanban 찾기
-        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
+        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow(() ->
+                new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(), authUser.getId())
-                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader라면 금지
-        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
             throw new RuntimeException();
         }
 
@@ -66,42 +78,56 @@ public class TicketService {
                 kanban
         );
 
-        return new TicketResponseDto(
-                ticket.getTitle(),
-                ticket.getContents(),
-                ticket.getDeadline(),
-                kanban.getId()
-        );
+        ticketRepository.save(ticket);
+
+        return new TicketResponseDto(ticket);
 
     }
 
-    public TicketResponseDto getTicket(Long id) {
-        Ticket ticket = ticketRepository.findById(id).orElseThrow();
+    public TicketDetailResponseDto getTicket(Long id) {
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        return new TicketResponseDto(
+        List<Comment> commentList = commentRepository.findAllByTicket(ticket);
+        List<CommentSaveResponseDto> commentSaveResponseDtoList = commentList.stream()
+                .map(CommentSaveResponseDto::new).toList();
+
+        List<Manager> managerList = managerRepository.findAllByTicket(ticket);
+        List<Long> memberList = new ArrayList<>();
+        for(Manager manager : managerList) {
+            memberList.add(manager.getMember().getUser().getId());
+        }
+
+        return new TicketDetailResponseDto(
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
-                ticket.getKanban().getId()
+                ticket.getKanban().getId(),
+                commentSaveResponseDtoList,
+                memberList
         );
 
     }
 
     @Transactional
-    public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketUpdateDto requestDto) {
+    public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketRequestDto requestDto) {
+
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
+
         //ticket entity에 등록될 kanban 찾기
-        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow();
+        Kanban kanban = kanbanRepository.findById(requestDto.getKanbanId()).orElseThrow(() ->
+                new HotSixException(ErrorCode.KANBAN_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(), authUser.getId())
-                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(kanban.getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader인지 확인
-        if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
+        if (member.getMemberRole().equals(MemberRole.ROLE_READER)){
             throw new RuntimeException();
         }
 
-        Ticket ticket = ticketRepository.findById(id).orElseThrow();
 
         ticket.update(
                 requestDto.getTitle(),
@@ -110,25 +136,40 @@ public class TicketService {
                 kanban
         );
 
-        return new TicketResponseDto(
-                ticket.getTitle(),
-                ticket.getContents(),
-                ticket.getDeadline(),
-                ticket.getKanban().getId()
-        );
+        return new TicketResponseDto(ticket);
     }
 
+    @Transactional
     public void deleteTicket(AuthUser authUser, Long id) {
-        Ticket ticket = ticketRepository.findById(id).orElseThrow();
+
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         //ticket을 등록하는 멤버 찾기
-        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(), authUser.getId())
-                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
+                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         //ticket을 등록하려는 유저의 role이 reader인지 확인
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) throw new RuntimeException();
 
         ticket.delete();
+    }
+
+    @Transactional
+    public TicketDetailResponseDto addManagerToTicket(AuthUser authUser, Long id, ManagerRequestDto requestDto) {
+        userService.checkUser(authUser.getId());
+        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+                new HotSixException(ErrorCode.TICKET_NOT_FOUND));
+
+        List<Long> memberList = requestDto.getMemberList();
+        for(Long memberId : memberList) {
+            Member member = memberRepository.findById(memberId).orElseThrow();
+            Manager manager = new Manager(ticket, member);
+            managerRepository.save(manager);
+        }
+
+        return getTicket(id);
+
     }
 
     public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketTitle, String ticketContents, String managerName, String deadline, String boardId) {
@@ -146,10 +187,10 @@ public class TicketService {
         // 예시로 생성된 Workspace와 User를 사용합니다. 실제로는 데이터베이스에서 조회해야 할 수 있습니다.
         Workspace workspace = workspaceRepository.findById(1L)
                 .orElseThrow(() -> new RuntimeException("워크스페이스를 찾을 수 없습니다."));
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("워크스페이스를 찾을 수 없습니다."));
 
-        Board board = new Board(user, workspace, "Sample Board", "blue", null);
+        Board board = new Board(member, workspace, "Sample Board", "blue", null);
         boardRepository.save(board);
 
         Kanban kanban = new Kanban(1, "Sample Kanban", board);
@@ -163,8 +204,6 @@ public class TicketService {
             } while (existingTitles.contains(randomTitle));
             existingTitles.add(randomTitle);
 
-            Member member = new Member(user, workspace, MemberRole.ROLE_BOARD);
-            memberRepository.save(member);
 
             Ticket ticket = new Ticket(randomTitle, "contents", "deadline", member, kanban);
             tickets.add(ticket);

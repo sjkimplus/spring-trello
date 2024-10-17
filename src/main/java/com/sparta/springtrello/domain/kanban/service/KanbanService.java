@@ -6,6 +6,7 @@ import com.sparta.springtrello.domain.board.entity.Board;
 import com.sparta.springtrello.domain.board.repository.BoardRepository;
 import com.sparta.springtrello.domain.kanban.dto.request.KanbanRequestDto;
 import com.sparta.springtrello.domain.kanban.dto.response.KanbanResponseDto;
+import com.sparta.springtrello.domain.kanban.dto.response.KanbanSimpleResponseDto;
 import com.sparta.springtrello.domain.kanban.entity.Kanban;
 import com.sparta.springtrello.domain.kanban.repository.KanbanRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
@@ -137,11 +138,11 @@ public class KanbanService {
         kanban.deleteKanban();
     }
 
-    public List<KanbanResponseDto> getKanbans(Long id){
+    public List<KanbanSimpleResponseDto> getKanbans(Long id){
         Board board = boardRepository.findById(id)
                 .orElseThrow(()-> new HotSixException(ErrorCode.BOARD_NOT_FOUND));
-        return kanbanRepository.findByBoard(board).stream()
-                .map(kanban -> new KanbanResponseDto(kanban.getTitle()))
+        return kanbanRepository.findAllByBoard_Id(board.getId()).stream()
+                .map(kanban -> new KanbanSimpleResponseDto(kanban.getTitle()))
                 .collect(Collectors.toList());
     }
 }

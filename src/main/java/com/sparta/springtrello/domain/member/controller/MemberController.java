@@ -3,12 +3,10 @@ package com.sparta.springtrello.domain.member.controller;
 import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.member.dto.request.MemberSaveRequestDto;
 import com.sparta.springtrello.domain.member.dto.response.MemberResponseDto;
-import com.sparta.springtrello.domain.member.entity.MemberRole;
-import com.sparta.springtrello.domain.member.repository.MemberRepository;
 import com.sparta.springtrello.domain.member.service.MemberService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
+//import com.sparta.springtrello.slack.SlackNotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +18,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+//    private final SlackNotificationService slackNotificationService;
 
     /**
      멤버 생성
@@ -29,6 +28,9 @@ public class MemberController {
                                                       @PathVariable Long id,
                                                       @RequestBody MemberSaveRequestDto requestDto){
         memberService.saveMember(authUser,id,requestDto);
+        // Slack으로 알림 전송
+        String slackMessage = String.format("Workspace ID: %d, User ID: %d - 새로운 맴버가 등록되었습니다", id, authUser.getId());
+//        slackNotificationService.sendSlackMessage(slackMessage);
         return ResponseEntity.ok(ApiResponseDto.success(null));
     }
 

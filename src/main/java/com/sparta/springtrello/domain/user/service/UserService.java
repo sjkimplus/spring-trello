@@ -30,7 +30,7 @@ public class UserService {
 
     public SignUpResponseDto create(SignUpRequestDto requestDto) {
 
-        if (requestDto.getName().isEmpty() || requestDto.getEmail().isEmpty() || requestDto.getPassword().isEmpty()) {
+        if (requestDto.getName().isEmpty() || requestDto.getEmail().isEmpty() || requestDto.getPassword().isEmpty() || requestDto.getRole()==null) {
             throw new HotSixException(MISSING_FORMAT);
         }
         // Validate email format
