@@ -43,7 +43,7 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    private User(Long id, String email, UserRole role) {
+    public User(Long id, String email, UserRole role) {
         this.id = id;
         this.email = email;
         this.role = role;
