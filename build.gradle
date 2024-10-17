@@ -13,6 +13,13 @@ java {
     }
 }
 
+bootJar {
+    archiveBaseName.set('trelloServer')
+}
+jar{
+    archiveBaseName.set('trelloServer')
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
