@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+      - feat-sungju
 
 env:
   PROJECT_NAME: spring-trello
