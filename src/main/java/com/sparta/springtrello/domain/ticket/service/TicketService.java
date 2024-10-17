@@ -112,7 +112,7 @@ public class TicketService {
     @Transactional
     public TicketResponseDto updateTicket(AuthUser authUser, Long id, TicketRequestDto requestDto) {
 
-        Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
+        Ticket ticket = ticketRepository.findByIdWithPessimisticLock(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
         //ticket entity에 등록될 kanban 찾기

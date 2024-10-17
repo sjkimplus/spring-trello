@@ -27,6 +27,11 @@ public class Ticket extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
+    @Version
+    private int version;
+     */
+
     @Column(nullable = false)
     private String title;
 
