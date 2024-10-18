@@ -1,5 +1,6 @@
 package com.sparta.springtrello.domain.comment.entity;
 
+import com.sparta.springtrello.common.Status;
 import com.sparta.springtrello.common.Timestamped;
 import com.sparta.springtrello.domain.comment.dto.request.CommentEditRequestDto;
 import com.sparta.springtrello.domain.comment.dto.request.CommentSaveRequestDto;
@@ -30,6 +31,9 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Enumerated(value = EnumType.STRING)
+    private Status status;
+
     public Comment(CommentSaveRequestDto commentSaveRequestDto, Ticket ticket, Member member) {
         this.content = commentSaveRequestDto.getContent();
         this.ticket = ticket;
@@ -39,5 +43,9 @@ public class Comment extends Timestamped {
 
     public void update(CommentEditRequestDto commentEditRequestDto) {
         this.content = commentEditRequestDto.getContent();
+    }
+
+    public void delete() {
+        this.status = Status.DELETED;
     }
 }

@@ -33,6 +33,7 @@ public class WorkspaceService {
     private final MemberRepository memberRepository;
     private final UserService userService;
 
+    // 워크스페이스 생성
     public WorkspaceSaveResponseDto createWorkspace(AuthUser authUser,
                                                     WorkspaceSaveRequestDto workspaceSaveRequestDto) {
 
@@ -53,6 +54,7 @@ public class WorkspaceService {
         return new WorkspaceSaveResponseDto(workspace);
     }
 
+    // 워크스페이스 조회
     @Transactional(readOnly = true)
     public List<WorkspaceReadResponseDto> readWorkspace(AuthUser authUser) {
 
@@ -72,6 +74,7 @@ public class WorkspaceService {
                 )).toList();
     }
 
+    // 워크 스페이스 수정
     public WorkspaceEditResponseDto editWorkspace(AuthUser authUser,
                                                   WorkspaceEditRequestDto workspaceEditRequestDto,
                                                   Long id) {
@@ -100,6 +103,7 @@ public class WorkspaceService {
         return new WorkspaceEditResponseDto(workspace);
     }
 
+    // 워크스페이스 삭제
     public void deleteWorkspace(Long id, AuthUser authUser) {
 
         // 유저검증
@@ -118,6 +122,8 @@ public class WorkspaceService {
         Workspace workspace = workspaceRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.WORKSPACE_NOT_FOUND));
 
-        workspaceRepository.deleteById(id);
+        workspace.delete();
+
+        workspaceRepository.save(workspace);
     }
 }

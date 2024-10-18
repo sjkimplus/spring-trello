@@ -30,6 +30,7 @@ public class CommentService {
     private final UserService userService;
     private final TicketRepository ticketRepository;
 
+    // 댓글 생성
     public CommentSaveResponseDto saveComment(AuthUser authUser, Long cardId, CommentSaveRequestDto commentSaveRequestDto) {
 
         Long userId = authUser.getId();
@@ -38,8 +39,8 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
 
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
@@ -51,6 +52,7 @@ public class CommentService {
         return new CommentSaveResponseDto(comment);
     }
 
+    // 댓글 수정
     public CommentEditResponseDto editComment(AuthUser authUser, Long id, Long cardId, CommentEditRequestDto commentEditRequestDto) {
 
         Long userId = authUser.getId();
@@ -59,8 +61,8 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
@@ -75,6 +77,7 @@ public class CommentService {
         return new CommentEditResponseDto(comment);
     }
 
+    // 댓글 삭제
     public void deleteComment(Long id, Long cardId, AuthUser authUser) {
 
         Long userId = authUser.getId();
@@ -83,13 +86,18 @@ public class CommentService {
         Ticket ticket = ticketRepository.findById(cardId).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
-        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(),authUser.getId())
-                .orElseThrow(()-> new HotSixException(ErrorCode.USER_NOT_FOUND));
+        Member member = memberRepository.findByWorkspaceIdAndUserId(ticket.getKanban().getBoard().getWorkspace().getId(), authUser.getId())
+                .orElseThrow(() -> new HotSixException(ErrorCode.USER_NOT_FOUND));
 
         if (member.getMemberRole().equals(MemberRole.ROLE_READER)) {
             throw new HotSixException(ErrorCode.USER_NO_AUTHORITY);
         }
 
-        commentRepository.deleteById(id);
+        Comment comment = commentRepository.findById(id).orElseThrow(() ->
+                new HotSixException(ErrorCode.COMMENT_NOT_FOUND));
+
+        comment.delete();
+        commentRepository.save(comment);
+
     }
 }

@@ -5,6 +5,7 @@ import com.sparta.springtrello.domain.manager.dto.ManagerRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.TicketSearchResponseDto;
 import com.sparta.springtrello.domain.ticket.service.TicketService;
 import com.sparta.springtrello.domain.user.dto.AuthUser;
 import lombok.RequiredArgsConstructor;
@@ -86,11 +87,11 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDto<Page<TicketResponseDto>>> searchTickets(
+    public ResponseEntity<ApiResponseDto<Page<TicketSearchResponseDto>>> searchTickets(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam long workspaceId,
-            @RequestParam(required = false) String ticketTitle, // 제목 또는 내용이 될수있는 키워드
+            @RequestParam(required = false) String ticketTitle,
             @RequestParam(required = false) String ticketContents,
             @RequestParam(required = false) String managerName,
             @RequestParam(required = false) String deadline,
