@@ -1,5 +1,6 @@
 package com.sparta.springtrello.domain.ticket.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sparta.springtrello.domain.comment.dto.response.CommentSaveResponseDto;
 import lombok.Getter;
 
@@ -14,7 +15,12 @@ public class TicketDetailResponseDto {
     private List<CommentSaveResponseDto> commentList;
     private List<Long> memberList;
 
-    public TicketDetailResponseDto(String title, String contents, String deadline, Long kanbanId, List<CommentSaveResponseDto> commentList, List<Long> memberList ) {
+    public TicketDetailResponseDto(@JsonProperty("title") String title,
+                                   @JsonProperty("contents") String contents,
+                                   @JsonProperty("deadline") String deadline,
+                                   @JsonProperty("kanbanId") Long kanbanId,
+                                   @JsonProperty("commentList") List<CommentSaveResponseDto> commentList,
+                                   @JsonProperty("memberList") List<Long> memberList){
         this.title = title;
         this.contents = contents;
         this.deadline = deadline;

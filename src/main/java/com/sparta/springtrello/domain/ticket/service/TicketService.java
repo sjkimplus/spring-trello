@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.ticket.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.sparta.springtrello.common.exception.ErrorCode;
 import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.board.entity.Board;
@@ -88,6 +90,14 @@ public class TicketService {
 
     @Transactional
     public TicketDetailResponseDto getTicket(AuthUser authUser, Long id) {
+        String cacheKey = "ticket:detail:" + id;
+
+        // Redis에서 캐시 조회
+        TicketDetailResponseDto cachedResponse = (TicketDetailResponseDto) viewCountRepository.opsForValue().get(cacheKey);
+
+        if (cachedResponse != null) {
+            return cachedResponse;
+        }
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
@@ -120,7 +130,8 @@ public class TicketService {
             memberList.add(manager.getMember().getUser().getId());
         }
 
-        return new TicketDetailResponseDto(
+        // DB에서 조회한 정보를 DTO로 변환
+        TicketDetailResponseDto responseDto = new TicketDetailResponseDto(
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
@@ -128,7 +139,10 @@ public class TicketService {
                 commentSaveResponseDtoList,
                 memberList
         );
+        // Redis에 캐시 저장
+        viewCountRepository.opsForValue().set(cacheKey, responseDto);
 
+        return responseDto;
     }
 
     @Transactional
