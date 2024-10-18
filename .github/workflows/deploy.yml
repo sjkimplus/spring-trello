@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat-sungju
 
 # 워크 플로우가 깃 레포에 대한 권한을 읽기 만 가능하게 설정한다.
 permissions:
