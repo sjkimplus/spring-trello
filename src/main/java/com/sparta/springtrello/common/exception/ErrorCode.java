@@ -37,8 +37,12 @@ public enum ErrorCode {
 
     // Ticket
     TICKET_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 티켓입니다."),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 댓글입니다.");
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 댓글입니다."),
 
+    // 첨부파일
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"파일이 없습니다."),
+    FILE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "파일 크기가 5MB를 초과합니다."),
+    FILE_WRONG_FORMAT(HttpStatus.BAD_REQUEST, "지원되지 않는 파일 형식입니다.");
 
 
     private final HttpStatus httpStatus;

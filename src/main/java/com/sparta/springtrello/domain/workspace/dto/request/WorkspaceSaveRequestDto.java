@@ -8,4 +8,8 @@ public class WorkspaceSaveRequestDto {
     private String title;
     private String content;
 
+    public WorkspaceSaveRequestDto(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

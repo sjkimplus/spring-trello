@@ -4,7 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.TicketSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,8 +15,8 @@ import java.util.List;
 
 import static com.sparta.springtrello.domain.board.entity.QBoard.board;
 import static com.sparta.springtrello.domain.kanban.entity.QKanban.kanban;
-import static com.sparta.springtrello.domain.ticket.entity.QTicket.ticket;
 import static com.sparta.springtrello.domain.member.entity.QMember.member;
+import static com.sparta.springtrello.domain.ticket.entity.QTicket.ticket;
 import static com.sparta.springtrello.domain.user.entity.QUser.user;
 import static com.sparta.springtrello.domain.workspace.entity.QWorkspace.workspace;
 
@@ -26,7 +26,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<TicketResponseDto> searchTickets(
+    public Page<TicketSearchResponseDto> searchTickets(
             long workspaceId,
             String ticketTitle,
             String ticketContents,
@@ -35,10 +35,10 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository {
             String boardId,
             Pageable pageable
     ) {
-        List<TicketResponseDto> results = queryFactory
+        List<TicketSearchResponseDto> results = queryFactory
                 .select(
                         Projections.constructor(
-                                TicketResponseDto.class,
+                                TicketSearchResponseDto.class,
                                 ticket.title,
                                 ticket.contents,
                                 ticket.deadline,
@@ -47,6 +47,7 @@ public class TicketQueryDslRepositoryImpl implements TicketQueryDslRepository {
                 )
                 .from(ticket)
                 .leftJoin(ticket.member, member)
+                .leftJoin(member.user, user)
                 .leftJoin(ticket.kanban, kanban)
                 .leftJoin(kanban.board, board)
                 .leftJoin(board.workspace, workspace)

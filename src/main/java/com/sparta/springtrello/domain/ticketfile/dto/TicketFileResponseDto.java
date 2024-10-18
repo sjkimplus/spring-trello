@@ -1,4 +1,4 @@
-package com.sparta.springtrello.domain.ticketfile.dto.responseDto;
+package com.sparta.springtrello.domain.ticketfile.dto;
 
 import lombok.Getter;
 

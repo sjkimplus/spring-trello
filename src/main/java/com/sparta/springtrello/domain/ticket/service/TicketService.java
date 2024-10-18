@@ -1,5 +1,7 @@
 package com.sparta.springtrello.domain.ticket.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.sparta.springtrello.common.exception.ErrorCode;
 import com.sparta.springtrello.common.exception.HotSixException;
 import com.sparta.springtrello.domain.board.entity.Board;
@@ -15,10 +17,7 @@ import com.sparta.springtrello.domain.manager.repository.ManagerRepository;
 import com.sparta.springtrello.domain.member.entity.Member;
 import com.sparta.springtrello.domain.member.entity.MemberRole;
 import com.sparta.springtrello.domain.member.repository.MemberRepository;
-import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketRankingDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
-import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.*;
 import com.sparta.springtrello.domain.ticket.entity.Ticket;
 import com.sparta.springtrello.domain.ticket.repository.TicketQueryDslRepository;
 import com.sparta.springtrello.domain.ticket.repository.TicketRepository;
@@ -91,6 +90,14 @@ public class TicketService {
 
     @Transactional
     public TicketDetailResponseDto getTicket(AuthUser authUser, Long id) {
+        String cacheKey = "ticket:detail:" + id;
+
+        // Redis에서 캐시 조회
+        TicketDetailResponseDto cachedResponse = (TicketDetailResponseDto) viewCountRepository.opsForValue().get(cacheKey);
+
+        if (cachedResponse != null) {
+            return cachedResponse;
+        }
         Ticket ticket = ticketRepository.findById(id).orElseThrow(() ->
                 new HotSixException(ErrorCode.TICKET_NOT_FOUND));
 
@@ -123,7 +130,8 @@ public class TicketService {
             memberList.add(manager.getMember().getUser().getId());
         }
 
-        return new TicketDetailResponseDto(
+        // DB에서 조회한 정보를 DTO로 변환
+        TicketDetailResponseDto responseDto = new TicketDetailResponseDto(
                 ticket.getTitle(),
                 ticket.getContents(),
                 ticket.getDeadline(),
@@ -131,7 +139,10 @@ public class TicketService {
                 commentSaveResponseDtoList,
                 memberList
         );
+        // Redis에 캐시 저장
+        viewCountRepository.opsForValue().set(cacheKey, responseDto);
 
+        return responseDto;
     }
 
     @Transactional
@@ -196,11 +207,12 @@ public class TicketService {
         return getTicket(authUser, id);
 
     }
-//
-public Page<TicketResponseDto> searchTickets(int page, int size, long workspaceId, String ticketTitle, String ticketContents, String managerName, String deadline, String boardId) {
-    Pageable pageable = PageRequest.of(page - 1, size);
-    return ticketQueryDslRepository.searchTickets(workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId, pageable);
-}
+
+    public Page<TicketSearchResponseDto> searchTickets(int page, int size, long workspaceId, String ticketTitle, String ticketContents, String managerName, String deadline, String boardId) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return ticketQueryDslRepository.searchTickets(workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId, pageable);
+    }
+
 
     @Transactional
     public String pushTickets() {
