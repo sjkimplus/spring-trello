@@ -8,4 +8,8 @@ public class WorkspaceEditRequestDto {
     private String title;
     private String content;
 
+    public WorkspaceEditRequestDto(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
