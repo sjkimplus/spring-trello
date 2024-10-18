@@ -57,7 +57,6 @@ public class KanbanServiceTest {
         Member member = new Member(user, workspace, MemberRole.ROLE_WORKSPACE);
         Board board = new Board(member, workspace, "a", "a", "a");
 
-        // Mocking behavior
         given(boardRepository.findById(anyLong())).willReturn(Optional.of(board));
         given(memberRepository.findByWorkspaceIdAndUserId(anyLong(), anyLong())).willReturn(Optional.of(member));
 
@@ -66,6 +65,28 @@ public class KanbanServiceTest {
         Kanban kanban = new Kanban(1,"a",board);
         //When
         kanbanService.createKanban(authUser,boardId,kanbanRequestDto);
+        //Then
+        assertNotNull(kanban);
+        assertEquals(kanban.getTitle(), kanbanRequestDto.getTitle());
+    }
+
+    @Test
+    public void 칸반_수정_성공() {
+        //given
+        long boardId = 1L;
+        AuthUser authUser = new AuthUser(1L, "a", UserRole.ROLE_ADMIN);
+        KanbanRequestDto kanbanRequestDto = new KanbanRequestDto("a");
+        User user = new User(authUser.getId(), authUser.getEmail(), UserRole.ROLE_ADMIN);
+        Workspace workspace = new Workspace(1L, "title", "content", null);
+        Member member = new Member(user, workspace, MemberRole.ROLE_WORKSPACE);
+        Board board = new Board(member, workspace, "a", "a", "a");
+        Kanban kanban = new Kanban(1,"a",board);
+
+        given(boardRepository.findById(anyLong())).willReturn(Optional.of(board));
+        given(memberRepository.findByWorkspaceIdAndUserId(anyLong(), anyLong())).willReturn(Optional.of(member));
+        given(kanbanRepository.findById(1L)).willReturn(Optional.of(kanban));
+        //When
+        kanbanService.updateKanban(authUser,boardId, 1L, kanbanRequestDto);
         //Then
         assertNotNull(kanban);
         assertEquals(kanban.getTitle(), kanbanRequestDto.getTitle());
