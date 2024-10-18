@@ -3,6 +3,7 @@ package com.sparta.springtrello.domain.ticket.controller;
 import com.sparta.springtrello.common.dto.ApiResponseDto;
 import com.sparta.springtrello.domain.manager.dto.ManagerRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketDetailResponseDto;
+import com.sparta.springtrello.domain.ticket.dto.TicketRankingDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketRequestDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketResponseDto;
 import com.sparta.springtrello.domain.ticket.dto.TicketSearchResponseDto;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,8 +42,9 @@ public class TicketController {
      * @return : 조회한 Ticket의 정보
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseDto<TicketDetailResponseDto>> getTicket(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponseDto.success(ticketService.getTicket(id)));
+    public ResponseEntity<ApiResponseDto<TicketDetailResponseDto>> getTicket(@AuthenticationPrincipal AuthUser authUser,
+                                                                             @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponseDto.success(ticketService.getTicket(authUser,id)));
 
     }
 
@@ -100,9 +104,16 @@ public class TicketController {
         return ResponseEntity.ok(ApiResponseDto.success(ticketService.searchTickets(page, size, workspaceId, ticketTitle, ticketContents, managerName, deadline, boardId)));
     }
 
+  @GetMapping("/ranks")
+    public ResponseEntity<ApiResponseDto<List<TicketRankingDto>>> getRanking() {
+      return ResponseEntity.ok(ApiResponseDto.success(ticketService.getDailyViewRanking()));
+  }
     // 최적화위한 더미데이터 삽입API
     @PostMapping("/pushTickets")
     public ResponseEntity<String> pushTickets() {
-     return ResponseEntity.ok(ticketService.pushTickets());
+        return ResponseEntity.ok(ticketService.pushTickets());
     }
+
+
+
 }

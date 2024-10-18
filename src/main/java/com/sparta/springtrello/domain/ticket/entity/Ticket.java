@@ -27,6 +27,11 @@ public class Ticket extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
+    @Version
+    private int version;
+     */
+
     @Column(nullable = false)
     private String title;
 
@@ -66,4 +71,5 @@ public class Ticket extends Timestamped {
     public void delete() {
         this.status = Status.DELETED;
     }
+
 }

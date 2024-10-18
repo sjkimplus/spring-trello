@@ -1,0 +1,16 @@
+# deploy시 codedeploy가 참조하는 파일
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /home/ubuntu/hotsix
+permissions:
+  - object: /home/ubuntu/hotsix/
+    owner: ubuntu
+    group: ubuntu
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 60
+      runas: ubuntu
