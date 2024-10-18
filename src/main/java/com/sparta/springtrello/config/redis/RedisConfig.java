@@ -1,4 +1,4 @@
-package com.sparta.springtrello.config;
+package com.sparta.springtrello.config.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
