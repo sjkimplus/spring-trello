@@ -1,5 +1,5 @@
 # HOTSIX-TRELLO
-
+### [🔤 English Version README link 🔗](README-en.md)
 
 ## 🏁프로젝트 목표
 "HOTSIX 먹고 힘내서 일하는 Trello 서비스 프로젝트!!!" 
