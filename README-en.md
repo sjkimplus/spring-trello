@@ -2,7 +2,7 @@
 
 ## 👋🏻 Introduction
 
----
+-----------------------
 Spring-Trello is a clone coding project of the popular productivity app Trello using springboot and java. <br>
 This README includes the following table of contents:
 
@@ -16,7 +16,7 @@ This README includes the following table of contents:
 
 ## 🛠️ Tech Stack
 
----
+-----------------------
 <div>
 <h3>Language & Framework</h3>
       <div>
@@ -62,7 +62,7 @@ This README includes the following table of contents:
 
 ## 👨‍👩‍👧‍👦 Our Team
 
----
+-----------------------
 
 | Name           | Domain in Charge  | Blog Link                                        | GitHub Link                               |
 |----------------|-------------------|--------------------------------------------------|-------------------------------------------|
@@ -73,19 +73,19 @@ This README includes the following table of contents:
 
 ## 🖋️ Wireframe
 
----
+-----------------------
 ![image](https://github.com/user-attachments/assets/6c8e9fb1-df1c-4afc-8c54-44f431346d58)
 
 
 ## 📋 ERD
 
----
+-----------------------
 ![image](https://github.com/user-attachments/assets/a565d799-53d6-4347-bde5-a607650a6580)
 
 
 ## ⭐ Key Project Features
 
----
+-----------------------
 ### 🗨 Kanban Board Collaboration Tool (CRUD)
 > * Members within a workspace can organize and share tasks.
 >   1. Workspace Create/Update/Delete: After creating a workspace, colleagues can be invited to collaborate.
@@ -120,7 +120,7 @@ This README includes the following table of contents:
 
 ##  📝 API Documentation
 
----
+-----------------------
 
 ### 1️⃣ Sign-Up/Login Functionality & TICKET Search Functionality (Lead: Kim Sungju)
 ![image](https://github.com/user-attachments/assets/035a73ad-cabd-4542-a26c-8654351401e7)
@@ -140,8 +140,7 @@ This README includes the following table of contents:
 
 ## 🧹 Troubleshooting
 
----
-
+-----------------------
 ### Search Optimization via Indexing
 - **Problem:** Applying an index resulted in negligible performance improvement (approx. 1 second).
 - **Solution:** Initially searched both title and content with `ticketKeyword`, but separated them into `ticketTitle` and `ticketContents` for individual queries, achieving nearly a 50% query speed improvement.
