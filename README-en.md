@@ -98,7 +98,7 @@ This README includes the following table of contents:
 > * Also, when a new comment is added to a ticket, it notifies which ticket received the comment.
 
 ### 📁 File Attachments
-> * Implemented file attachment registration, modification, and deletion feature for tickets using AMAZON S3.
+> * Implemented file attachment registration, modification, and deletion feature for tickets using AWS S3 bucket.
 > * Designed an independent entity class with relationships (many to one) to enable multiple file attachments per ticket.
 
 ### 🕙 Concurrency Control
@@ -107,7 +107,7 @@ This README includes the following table of contents:
 
 ### ⌛ Caching 
 > * Used with Redis caching to prevent DB bottlenecks during repeated requests.
-> * View counts are managed separately using Redis caching, enabling efficienty popularity ranking based on view counts.
+> * View counts are managed separately using Redis caching, enabling efficient popularity ranking based on view counts.
 > * View counts are reset every 24 hours, and this is done via Redis' TimeToLive(TTL) feature.
 
 
@@ -122,16 +122,16 @@ This README includes the following table of contents:
 
 -----------------------
 
-### 1️⃣ Sign-Up/Login Functionality & TICKET Search Functionality (Lead: Kim Sungju)
+### 1️⃣ Sign-Up/Login Functionality & TICKET Search Functionality (Lead: Sungju Kim)
 ![image](https://github.com/user-attachments/assets/035a73ad-cabd-4542-a26c-8654351401e7)
 
-### 2️⃣ MEMBER & KANBAN Functionality (Lead: Lim Chaegyu)
+### 2️⃣ MEMBER & KANBAN Functionality (Lead: Chaegyu Im)
 ![image](https://github.com/user-attachments/assets/d07a4627-0601-41be-8ce3-274ebe8b9fee)
 
-### 3️⃣ WORKSPACE & COMMENT Functionality (Lead: Jung Jinho)
+### 3️⃣ WORKSPACE & COMMENT Functionality (Lead: Jinho Jeong)
 ![image](https://github.com/user-attachments/assets/e79b3d2b-03f0-4aec-a625-062a0866ae04)
 
-### 4️⃣ BOARD & TICKET Functionality (Lead: Park Daehyun)
+### 4️⃣ BOARD & TICKET Functionality (Lead: Daehyeon Park)
 ![image](https://github.com/user-attachments/assets/e04b7fd1-7458-40fd-a952-7eb30734c17c)
 ![image](https://github.com/user-attachments/assets/474f1826-d6ce-48c7-8ba3-d473595ab6e4)
 ![image](https://github.com/user-attachments/assets/06cdae45-329b-47cf-b583-0dbea5c75417)
@@ -142,7 +142,7 @@ This README includes the following table of contents:
 
 -----------------------
 ### Search Optimization via Indexing
-- **Problem:** Applying an index resulted in negligible performance improvement (approx. 1 second).
+- **Problem:** Applying indexing for search optimization resulted in negligible performance improvement (approx. 1 second).
 - **Solution:** Initially searched both title and content with `ticketKeyword`, but separated them into `ticketTitle` and `ticketContents` for individual queries, achieving nearly a 50% query speed improvement.
 
 ### Optimistic Lock Exception Handling
