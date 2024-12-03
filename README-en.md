@@ -2,6 +2,7 @@
 
 ## 👋🏻 Introduction
 
+-----------------------
 Spring-Trello is a clone coding project of the popular productivity app Trello using springboot and java. <br>
 This README includes the following table of contents:
 
@@ -15,7 +16,7 @@ This README includes the following table of contents:
 
 ## 🛠️ Tech Stack
 
-
+-----------------------
 <div>
 <h3>Language & Framework</h3>
       <div>
