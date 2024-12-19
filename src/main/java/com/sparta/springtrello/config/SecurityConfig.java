@@ -1,12 +1,8 @@
 package com.sparta.springtrello.config;
 
-import com.sparta.springtrello.domain.member.entity.Member;
-import com.sparta.springtrello.domain.member.entity.MemberRole;
-import com.sparta.springtrello.domain.user.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
