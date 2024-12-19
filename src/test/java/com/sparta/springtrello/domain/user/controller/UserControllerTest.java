@@ -91,33 +91,6 @@ public class UserControllerTest {
         verify(userService, times(1)).login(any(JwtUtil.class), any(SignInRequestDto.class));
     }
 
-//    @Test
-//    void User_삭제_성공() throws Exception {
-//        // Given
-//        UserDeleteRequestDto request = new UserDeleteRequestDto("Password123!");
-//        String result = "삭제 완료";
-//        AuthUser authUser = new AuthUser(1L, "user1@email.com", UserRole.ROLE_USER);
-//
-//        // Mock the service call
-//        when(userService.delete(any(Long.class), any(UserDeleteRequestDto.class))).thenReturn(result);
-//
-//        // Simulate authentication
-//        UsernamePasswordAuthenticationToken auth =
-//                new UsernamePasswordAuthenticationToken(authUser, null);
-//
-//        // When & Then
-//        mockMvc.perform(delete("/users")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(request))
-//                        .with(authentication(auth))) // Use authentication mock
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.success").value(true))
-//                .andExpect(jsonPath("$.data").value(result));
-//
-//        // Verify service interaction
-//        verify(userService, times(1)).delete(any(Long.class), any(UserDeleteRequestDto.class));
-//    }
-
     @Test
     void User_삭제_성공() throws Exception {
         // Given
@@ -153,6 +126,4 @@ public class UserControllerTest {
         // Verify service interaction
         verify(userService, times(1)).find(any(Long.class));
     }
-
-
 }
