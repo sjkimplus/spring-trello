@@ -81,7 +81,7 @@ public class UserService {
                 new HotSixException(USER_NOT_FOUND)
         );
 
-        if (user.getStatus()== UserStatus.DELETED)
+        if (user.getStatus()==UserStatus.DELETED)
             throw new HotSixException(USER_NOT_FOUND);
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
@@ -113,7 +113,6 @@ public class UserService {
 
         if (user.getStatus()==UserStatus.DELETED)
             throw new HotSixException(USER_NOT_FOUND);
-
     }
 }
 
